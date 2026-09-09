@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "status": "implemented_not_benchmarked",
-  "reference_root": "D:\\Material\\Literature Reading\\code\\lucid-rag",
-  "reference_manifest": "manifests/reference_snapshot.json",
+  "reference_root": "",
+  "reference_manifest": "data/manifest.json",
   "seed": 42,
   "device": "cuda",
   "attack_precision": "fp32",
-  "memgallery_root": "D:\\Material\\Literature Reading\\code\\Mem-Gallery",
+  "memgallery_root": "data",
   "dataset": "AI_Robotics_Automation_Future_Tech",
   "selection": {
     "mode": "strict_reference_compatibility",
@@ -145,7 +145,7 @@
     "exploratory_memory_reduction_fraction": 0.2
   },
   "runtime": {
-    "allow_downloads": false,
+    "allow_downloads": true,
     "allow_device_fallback": false,
     "require_true_local_tokens": true,
     "hash_model_weights": true,

@@ -91,6 +91,7 @@ def generate_frozen_run(
     steps: int | None = None,
     axis_ratio: float | None = None,
     sample_ids: Iterable[str] | None = None,
+    max_samples: int | None = None,
     time_budgets: Mapping[str, float] | None = None,
     time_budget_source_runs: Iterable[str | Path] | None = None,
     default_time_budget_seconds: float | None = None,
@@ -105,6 +106,7 @@ def generate_frozen_run(
         resolved_manifest,
         verify_hashes=True,
         sample_ids=sample_ids,
+        max_samples=max_samples,
     )
     manifest_validation_seconds = time.perf_counter() - manifest_validation_started
     source_run_records: list[dict[str, str]] = []

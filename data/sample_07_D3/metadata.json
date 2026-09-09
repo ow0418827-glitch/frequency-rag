@@ -1,0 +1,42 @@
+{
+  "sample_id": "sample_07_D3",
+  "question": "List all the brands related to autonomous vehicles that have discussed.",
+  "answer": "Tesla, Audi, Mercedes-Benz, Google, and Apple.",
+  "source_image": "data/sample_07_D3/source.jpg",
+  "source_sha256": "8fec7342e6c9fdea74efce637f59de095a8aed457f4f702f9023a5c016a0338e",
+  "target_image": "data/sample_07_D3/target.jpg",
+  "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+  "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+  "selection_score": 1.5696127489209175,
+  "phi_r": 0.21081984788179398,
+  "phi_contra": 0.7435171604156494,
+  "phi_c": 0.2564828395843506,
+  "historical_adversarial_image": "data/sample_07_D3/lucid_adversarial.png",
+  "historical_adversarial_sha256": "d014cba358d71446f3118e2227761c1beec44ae614104a1207459c39fce3c6c6",
+  "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\attack_metrics.json",
+  "historical_attack_metadata_sha256": "53264a70126d4bbfbeecfc1d2d1ec25291e00110dfceb085df121f63c0648907",
+  "historical_metrics": {
+    "sample_id": "sample_07_D3",
+    "encoder": "CLIP-B-32",
+    "encoder_model_id": "openai/clip-vit-base-patch32",
+    "embedding_dimension": 512,
+    "query_text": "List all the brands related to autonomous vehicles that have discussed.",
+    "cosine_metrics": {
+      "source_target_cosine": 0.4797419309616089,
+      "adversarial_target_cosine": 0.5016992688179016,
+      "target_cosine_gain": 0.021957337856292725,
+      "source_query_cosine": 0.26470962166786194,
+      "adversarial_query_cosine": 0.25617921352386475,
+      "query_cosine_gain": -0.008530408143997192,
+      "source_adversarial_cosine": 0.9180124402046204
+    },
+    "distance_metrics": {
+      "source_target_l2_distance": 1.0200570821762085,
+      "adversarial_target_l2_distance": 0.9982993602752686,
+      "target_l2_distance_reduction": 0.02175772190093994
+    }
+  },
+  "historical_steps": 1000,
+  "historical_epsilon": 0.06274509803921569,
+  "historical_step_size": 0.00196078431372549
+}

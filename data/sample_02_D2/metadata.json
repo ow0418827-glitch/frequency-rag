@@ -1,0 +1,42 @@
+{
+  "sample_id": "sample_02_D2",
+  "question": "Which of the images uploaded in 2024-07-07 focus on a robotic arm?",
+  "answer": "D2:IMG_003, D2:IMG_004",
+  "source_image": "data/sample_02_D2/source.jpg",
+  "source_sha256": "a02f497e964ded449f5bbc970dcc4134dd99788fa97b551cf1b59f85afa8a766",
+  "target_image": "data/sample_02_D2/target.jpg",
+  "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+  "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+  "selection_score": 1.5829952284693718,
+  "phi_r": 0.23275231570005417,
+  "phi_contra": 0.740097165107727,
+  "phi_c": 0.25990283489227295,
+  "historical_adversarial_image": "data/sample_02_D2/lucid_adversarial.png",
+  "historical_adversarial_sha256": "c4cdc5896c2c51903a241abfa221b35ffb2e958fd361f01816d762f3576ea0c3",
+  "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\attack_metrics.json",
+  "historical_attack_metadata_sha256": "4fe1ebd3bd97f96556e47a0bb5efbc24f21e62c29af7f36b94e45ccfe9f5b944",
+  "historical_metrics": {
+    "sample_id": "sample_02_D2",
+    "encoder": "CLIP-B-32",
+    "encoder_model_id": "openai/clip-vit-base-patch32",
+    "embedding_dimension": 512,
+    "query_text": "Which of the images uploaded in 2024-07-07 focus on a robotic arm?",
+    "cosine_metrics": {
+      "source_target_cosine": 0.558918297290802,
+      "adversarial_target_cosine": 0.5967214107513428,
+      "target_cosine_gain": 0.03780311346054077,
+      "source_query_cosine": 0.2788500487804413,
+      "adversarial_query_cosine": 0.2787184417247772,
+      "query_cosine_gain": -0.0001316070556640625,
+      "source_adversarial_cosine": 0.7874720692634583
+    },
+    "distance_metrics": {
+      "source_target_l2_distance": 0.939235508441925,
+      "adversarial_target_l2_distance": 0.8980855345726013,
+      "target_l2_distance_reduction": 0.04114997386932373
+    }
+  },
+  "historical_steps": 1000,
+  "historical_epsilon": 0.06274509803921569,
+  "historical_step_size": 0.00196078431372549
+}

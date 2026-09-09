@@ -38,6 +38,45 @@ class MemGalleryQuery:
     source_caption: str
 
 
+def _resolve_image_candidate(
+    raw_path: str | Path,
+    base_dir: Path | None = None,
+    sample_id: str | None = None,
+    role: str | None = None,
+) -> Path:
+    p = Path(raw_path)
+    if p.is_absolute() and p.is_file():
+        return p.resolve()
+
+    project_root = Path(__file__).resolve().parents[2]
+    candidates: list[Path] = []
+
+    if not p.is_absolute():
+        if base_dir:
+            candidates.append((base_dir / p).resolve())
+        candidates.append((project_root / p).resolve())
+        candidates.append(p.resolve())
+
+    # Check data/ by sample_id and role (source.jpg or target.jpg)
+    if sample_id and role:
+        candidates.append((project_root / "data" / sample_id / f"{role}.jpg").resolve())
+        candidates.append((project_root / "data" / sample_id / f"{role}.png").resolve())
+        if base_dir:
+            candidates.append((base_dir / sample_id / f"{role}.jpg").resolve())
+            candidates.append((base_dir / sample_id / f"{role}.png").resolve())
+
+    # Check data/ by filename
+    candidates.append((project_root / "data" / p.name).resolve())
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+
+    if base_dir and not p.is_absolute():
+        return (base_dir / p).resolve()
+    return p.resolve()
+
+
 @dataclass(frozen=True)
 class FrozenSample:
     sample_id: str
@@ -55,14 +94,21 @@ class FrozenSample:
     raw: dict[str, Any]
 
     @classmethod
-    def from_mapping(cls, raw: dict[str, Any]) -> "FrozenSample":
+    def from_mapping(
+        cls,
+        raw: dict[str, Any],
+        base_dir: Path | None = None,
+    ) -> "FrozenSample":
+        sid = str(raw["sample_id"])
+        src = _resolve_image_candidate(raw["source_image"], base_dir=base_dir, sample_id=sid, role="source")
+        tgt = _resolve_image_candidate(raw["target_image"], base_dir=base_dir, sample_id=sid, role="target")
         return cls(
-            sample_id=str(raw["sample_id"]),
+            sample_id=sid,
             question=str(raw["question"]),
             answer=str(raw.get("answer", "")),
-            source_image=Path(raw["source_image"]),
+            source_image=src,
             source_sha256=str(raw["source_sha256"]),
-            target_image=Path(raw["target_image"]),
+            target_image=tgt,
             target_sha256=str(raw["target_sha256"]),
             target_text=str(raw.get("target_text", "")),
             selection_score=float(raw["selection_score"]),
@@ -194,22 +240,101 @@ def load_queries_from_memgallery(memgallery_root: str | Path, dataset: str) -> l
     return queries
 
 
+def load_samples_from_data_dir(
+    data_dir: str | Path,
+    *,
+    verify_hashes: bool = True,
+    sample_ids: Iterable[str] | None = None,
+    max_samples: int | None = None,
+) -> tuple[dict[str, Any], list[FrozenSample]]:
+    dir_path = Path(data_dir).resolve()
+    if not dir_path.is_dir():
+        raise FileNotFoundError(f"数据目录不存在：{dir_path}")
+
+    subdirs = sorted([d for d in dir_path.iterdir() if d.is_dir() and not d.name.startswith(".")])
+    requested = set(sample_ids) if sample_ids is not None else None
+
+    raw_samples: list[dict[str, Any]] = []
+    for s_dir in subdirs:
+        sid = s_dir.name
+        if requested is not None and sid not in requested:
+            continue
+        meta_file = s_dir / "metadata.json"
+        if meta_file.is_file():
+            meta = load_json(meta_file)
+        else:
+            src_img = s_dir / "source.jpg"
+            tgt_img = s_dir / "target.jpg"
+            if not src_img.is_file() or not tgt_img.is_file():
+                continue
+            meta = {
+                "sample_id": sid,
+                "question": "",
+                "answer": "",
+                "source_image": str(src_img),
+                "source_sha256": sha256_file(src_img),
+                "target_image": str(tgt_img),
+                "target_sha256": sha256_file(tgt_img),
+                "target_text": "",
+                "selection_score": 1.0,
+                "phi_r": 0.0,
+                "phi_contra": 0.0,
+                "phi_c": 0.0,
+            }
+        raw_samples.append(meta)
+
+    if requested is not None:
+        found = {item["sample_id"] for item in raw_samples}
+        missing = requested - found
+        if missing:
+            raise KeyError(f"数据目录中没有这些样本：{', '.join(sorted(missing))}")
+
+    manifest_data = {
+        "status": "frozen_for_execution",
+        "data_dir": str(dir_path),
+        "num_samples": len(raw_samples),
+        "samples": raw_samples,
+    }
+
+    samples = [FrozenSample.from_mapping(item, base_dir=dir_path) for item in raw_samples]
+    if max_samples is not None and max_samples > 0:
+        samples = samples[:max_samples]
+    if not samples:
+        raise ValueError("数据目录中没有发现有效的样本。")
+    if verify_hashes:
+        verify_frozen_samples(samples)
+    return manifest_data, samples
+
+
 def load_frozen_manifest(
     path: str | Path,
     *,
     verify_hashes: bool = True,
     sample_ids: Iterable[str] | None = None,
+    max_samples: int | None = None,
 ) -> tuple[dict[str, Any], list[FrozenSample]]:
-    manifest_path = Path(path).resolve()
-    raw = load_json(manifest_path)
+    target_path = Path(path).resolve()
+    if target_path.is_dir():
+        if (target_path / "manifest.json").is_file():
+            target_path = target_path / "manifest.json"
+        else:
+            return load_samples_from_data_dir(
+                target_path,
+                verify_hashes=verify_hashes,
+                sample_ids=sample_ids,
+                max_samples=max_samples,
+            )
+
+    raw = load_json(target_path)
     if raw.get("status") not in {
         "frozen_from_saved_results_not_reselected_or_rerun",
         "frozen_for_execution",
     }:
         raise ValueError("历史清单状态不符合冻结参考要求。")
     requested = set(sample_ids) if sample_ids is not None else None
+    base_dir = target_path.parent
     samples = [
-        FrozenSample.from_mapping(item)
+        FrozenSample.from_mapping(item, base_dir=base_dir)
         for item in raw.get("samples", [])
         if requested is None or str(item.get("sample_id")) in requested
     ]
@@ -223,6 +348,8 @@ def load_frozen_manifest(
             raise KeyError(f"历史清单中没有这些样本：{', '.join(sorted(missing))}")
     if not samples:
         raise ValueError("冻结清单没有可运行样本。")
+    if max_samples is not None and max_samples > 0:
+        samples = samples[:max_samples]
     if verify_hashes:
         verify_frozen_samples(samples)
     return raw, samples

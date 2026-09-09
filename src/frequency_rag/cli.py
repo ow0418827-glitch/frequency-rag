@@ -24,7 +24,16 @@ from .pipeline import (
 )
 
 
-def _default_manifest(config: ProjectConfig) -> Path:
+def _default_manifest(config: ProjectConfig, data_dir: Path | None = None) -> Path:
+    if data_dir is not None:
+        data_path = Path(data_dir).resolve()
+        if (data_path / "manifest.json").is_file():
+            return data_path / "manifest.json"
+        return data_path
+    project_root = Path(__file__).resolve().parents[2]
+    candidate = project_root / "data" / "manifest.json"
+    if candidate.is_file():
+        return candidate
     return config.resolve_project_path(config.reference_manifest)
 
 
@@ -122,6 +131,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("configs/default.json"),
         help="可执行配置文件路径",
     )
+    parser.add_argument(
+        "--allow-downloads",
+        action="store_true",
+        help="允许在线自动下载缺失的预训练模型权重",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     doctor = subparsers.add_parser("doctor", help="核对环境、数据和本地权重")
@@ -129,12 +143,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     verify = subparsers.add_parser("verify", help="验证配置与冻结样本图片的内容校验值")
     verify.add_argument("--manifest", type=Path)
+    verify.add_argument("--data-dir", type=Path, help="数据目录（默认为 data/）")
     verify.add_argument("--sample-ids", nargs="*")
+    verify.add_argument("--num-samples", "--max-samples", "-n", dest="num_samples", type=int, help="核验的样本组数（例如 5 或 10）")
 
     select = subparsers.add_parser("select", help="冻结现有清单子集或重新核对选图一致性")
     select.add_argument("--manifest", type=Path)
+    select.add_argument("--data-dir", type=Path, help="数据目录（默认为 data/）")
     select.add_argument("--output", type=Path, required=True)
-    select.add_argument("--maximum-rows", type=int, default=10)
+    select.add_argument("--maximum-rows", "--num-samples", "-n", dest="maximum_rows", type=int, default=10, help="输出的最大样本组数")
     select.add_argument("--recompute", action="store_true")
     select.add_argument("--sample-ids", nargs="*")
 
@@ -145,10 +162,12 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
     )
     attack.add_argument("--manifest", type=Path)
+    attack.add_argument("--data-dir", type=Path, help="数据目录（默认为 data/）")
     attack.add_argument("--output-dir", type=Path, required=True)
     attack.add_argument("--steps", type=int)
     attack.add_argument("--axis-ratio", type=float)
     attack.add_argument("--sample-ids", nargs="*")
+    attack.add_argument("--num-samples", "--max-samples", "-n", dest="num_samples", type=int, help="动态指定的测试组数（例如 5 或 10，默认全部）")
     budget_group = attack.add_mutually_exclusive_group()
     budget_group.add_argument("--time-budget-seconds", type=float)
     budget_group.add_argument(
@@ -239,9 +258,10 @@ def _doctor(config: ProjectConfig, *, load_models: bool) -> int:
                 )
         report["local_feature_interface_probe"] = local_shapes
     print(json.dumps(report, ensure_ascii=False, indent=2))
+    manifest_target = _default_manifest(config)
+    manifest_exists = manifest_target.is_file() or manifest_target.is_dir()
     required_ok = bool(
-        report["memgallery_exists"]
-        and report["reference_manifest_exists"]
+        manifest_exists
         and (not missing_weights or config.runtime.allow_downloads)
         and (torch.cuda.is_available() or config.device == "cpu" or config.runtime.allow_device_fallback)
     )
@@ -254,21 +274,26 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         config = load_config(args.config)
+        if getattr(args, "allow_downloads", False):
+            from dataclasses import replace
+            config = replace(config, runtime=replace(config.runtime, allow_downloads=True))
+
         if args.command == "doctor":
             return _doctor(config, load_models=args.load_models)
 
         if args.command == "verify":
-            manifest_path = args.manifest or _default_manifest(config)
+            manifest_path = args.manifest or _default_manifest(config, getattr(args, "data_dir", None))
             _, samples = load_frozen_manifest(
                 manifest_path,
                 verify_hashes=True,
                 sample_ids=_split_sample_ids(args.sample_ids),
+                max_samples=getattr(args, "num_samples", None),
             )
             print(f"核查通过：{len(samples)} 行冻结样本的源图与目标图内容校验值一致。")
             return 0
 
         if args.command == "select":
-            manifest_path = args.manifest or _default_manifest(config)
+            manifest_path = args.manifest or _default_manifest(config, getattr(args, "data_dir", None))
             if args.maximum_rows <= 0:
                 raise ValueError("选图或冻结清单的最大行数必须为正整数。")
             if args.recompute:
@@ -286,6 +311,7 @@ def main(argv: list[str] | None = None) -> int:
                 manifest_path,
                 verify_hashes=True,
                 sample_ids=_split_sample_ids(args.sample_ids),
+                max_samples=args.maximum_rows,
             )
             selected = samples[: args.maximum_rows]
             save_json(
@@ -293,7 +319,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "status": "frozen_for_execution",
                     "source_manifest": str(Path(manifest_path).resolve()),
-                    "source_manifest_sha256": sha256_file(manifest_path),
+                    "source_manifest_sha256": sha256_file(manifest_path) if Path(manifest_path).is_file() else "",
                     "reference_commit": source.get("reference_commit"),
                     "num_samples": len(selected),
                     "samples": [sample.raw for sample in selected],
@@ -303,7 +329,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.command == "attack":
-            manifest_path = args.manifest or _default_manifest(config)
+            manifest_path = args.manifest or _default_manifest(config, getattr(args, "data_dir", None))
             if (
                 args.time_budget_from_fair_runs
                 and args.method
@@ -330,6 +356,7 @@ def main(argv: list[str] | None = None) -> int:
                 steps=args.steps,
                 axis_ratio=args.axis_ratio,
                 sample_ids=_split_sample_ids(args.sample_ids),
+                max_samples=getattr(args, "num_samples", None),
                 time_budgets=budgets,
                 time_budget_source_runs=args.time_budget_from_fair_runs,
                 default_time_budget_seconds=args.time_budget_seconds,

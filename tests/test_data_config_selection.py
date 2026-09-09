@@ -153,3 +153,22 @@ def test_config_rejects_silent_device_or_evaluator_behavior(cpu_config) -> None:
             cpu_config,
             experiment=replace(cpu_config.experiment, timing_repetitions=0),
         ).validate()
+
+
+def test_load_frozen_manifest_with_max_samples() -> None:
+    root = Path(__file__).resolve().parents[1]
+    manifest_path = root / "data" / "manifest.json"
+    if manifest_path.is_file():
+        _, samples_5 = load_frozen_manifest(manifest_path, verify_hashes=False, max_samples=5)
+        assert len(samples_5) == 5
+        _, samples_10 = load_frozen_manifest(manifest_path, verify_hashes=False, max_samples=10)
+        assert len(samples_10) == 10
+
+
+def test_load_samples_from_data_dir() -> None:
+    root = Path(__file__).resolve().parents[1]
+    data_dir = root / "data"
+    if data_dir.is_dir():
+        _, samples = load_frozen_manifest(data_dir, verify_hashes=False, max_samples=3)
+        assert len(samples) == 3
+

@@ -1,0 +1,731 @@
+{
+  "status": "frozen_from_saved_results_not_reselected_or_rerun",
+  "created_date": "2026-09-09",
+  "reference_root": "data",
+  "reference_commit": "293a4cc03f69348cfcf1f3aa7337a371c07d5fe8",
+  "reference_worktree_note": "untracked reports directory; source files separately hashed",
+  "reference_files": [
+    {
+      "relative_path": "configs/default.yaml",
+      "sha256": "af0726041b853ea87b2bbe765145b21e461b182be70c270564b9b35f562f8d54"
+    },
+    {
+      "relative_path": "src/lucid_rag/attack.py",
+      "sha256": "6b3dc1f6a824f0be85768b186668671e4c554e66ec49428d016608e90423342e"
+    },
+    {
+      "relative_path": "src/lucid_rag/ot.py",
+      "sha256": "fe2d590990bd1684eda99d8c6b01559d14cdd81d7a5c64ea1246883e7d65aef1"
+    },
+    {
+      "relative_path": "src/lucid_rag/selection.py",
+      "sha256": "89323f4eec46c9746efbbfec8e99a1801af0abad27f26be807e408bd13552f8a"
+    },
+    {
+      "relative_path": "src/lucid_rag/memgallery_data.py",
+      "sha256": "6a6b89f769e4b4d2c36cc6403de9c92626f47a12c9a7c689f2432f29a6d8340a"
+    },
+    {
+      "relative_path": "src/lucid_rag/models.py",
+      "sha256": "6daee6ab39b31c82ae894ffb11b92abca005352f137ae4f3fd2ba6445eb84e0d"
+    },
+    {
+      "relative_path": "src/lucid_rag/vector_eval.py",
+      "sha256": "3a1fc1331b412234f2d55e068f529413fb95aaee80cbd7523b12c7b30a76046c"
+    },
+    {
+      "relative_path": "src/lucid_rag/pipeline.py",
+      "sha256": "6eaa10dbcb9c3a9cbc9e8518ab715db6174aac8b74870842994e9dd4627b12f6"
+    },
+    {
+      "relative_path": "src/lucid_rag/config.py",
+      "sha256": "13696fe6b6fd9c0c1185800cd997904967b7085c155f9b35137b6cb7c14d4648"
+    },
+    {
+      "relative_path": "src/lucid_rag/io.py",
+      "sha256": "645a3006f7a7915474fc54194052784d0e49b7ae0dcb837171841f170f78b906"
+    },
+    {
+      "relative_path": "src/lucid_rag/cli.py",
+      "sha256": "0801d284ac3ffc0231387fff087a8119c7f98d4f4508f3dcb29bd512ccf2c710"
+    }
+  ],
+  "summary_path": "data/summary.json",
+  "summary_sha256": "2d10d13718f090ed4222eeac33b61c7516dbbff6e077967247d6e1a56c68f2bb",
+  "dataset": "AI_Robotics_Automation_Future_Tech",
+  "encoder": "CLIP-B-32",
+  "num_samples": 10,
+  "historical_timestamp": "2026-08-31 20:14:58",
+  "historical_averages": {
+    "mean_source_target_cosine": 0.4781057953834534,
+    "mean_adversarial_target_cosine": 0.5412202388048172,
+    "mean_target_cosine_gain": 0.06311444342136383,
+    "mean_source_query_cosine": 0.2584841355681419,
+    "mean_adversarial_query_cosine": 0.25771784484386445,
+    "mean_query_cosine_gain": -0.0007662907242774964,
+    "mean_target_l2_distance_reduction": 0.06620089411735534
+  },
+  "historical_attack_time_seconds": null,
+  "historical_peak_memory_bytes": null,
+  "weight_revisions_verified": false,
+  "samples": [
+    {
+      "sample_id": "sample_01_D1",
+      "question": "Which image shown in 2024-06-17 is an application of artificial intelligence in the field of education?",
+      "answer": "D1:IMG_002",
+      "source_image": "data/sample_01_D1/source.jpg",
+      "source_sha256": "e9068df03df89461a9839baa50bae90db0a4c4ef44364f74201f460747858a58",
+      "target_image": "data/sample_01_D1/target.jpg",
+      "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+      "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+      "selection_score": 1.6177033334970474,
+      "phi_r": 0.24127382785081863,
+      "phi_contra": 0.7505718022584915,
+      "phi_c": 0.24942819774150848,
+      "historical_adversarial_image": "data/sample_01_D1/lucid_adversarial.png",
+      "historical_adversarial_sha256": "982d292237b6981068af3c2b855d0497e757c4a111c0d5fefa727f83fd621531",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_01_D1\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "3f0f15c472b364016913668f80c86cdd2ab56d4b2094cda2441b534332a77626",
+      "historical_metrics": {
+        "sample_id": "sample_01_D1",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Which image shown in 2024-06-17 is an application of artificial intelligence in the field of education?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.37082356214523315,
+          "adversarial_target_cosine": 0.411422997713089,
+          "target_cosine_gain": 0.040599435567855835,
+          "source_query_cosine": 0.3126201033592224,
+          "adversarial_query_cosine": 0.32473036646842957,
+          "query_cosine_gain": 0.012110263109207153,
+          "source_adversarial_cosine": 0.9308758974075317
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 1.1217633485794067,
+          "adversarial_target_l2_distance": 1.0849673748016357,
+          "target_l2_distance_reduction": 0.036795973777770996
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_02_D2",
+      "question": "Which of the images uploaded in 2024-07-07 focus on a robotic arm?",
+      "answer": "D2:IMG_003, D2:IMG_004",
+      "source_image": "data/sample_02_D2/source.jpg",
+      "source_sha256": "a02f497e964ded449f5bbc970dcc4134dd99788fa97b551cf1b59f85afa8a766",
+      "target_image": "data/sample_02_D2/target.jpg",
+      "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+      "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+      "selection_score": 1.5829952284693718,
+      "phi_r": 0.23275231570005417,
+      "phi_contra": 0.740097165107727,
+      "phi_c": 0.25990283489227295,
+      "historical_adversarial_image": "data/sample_02_D2/lucid_adversarial.png",
+      "historical_adversarial_sha256": "c4cdc5896c2c51903a241abfa221b35ffb2e958fd361f01816d762f3576ea0c3",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "4fe1ebd3bd97f96556e47a0bb5efbc24f21e62c29af7f36b94e45ccfe9f5b944",
+      "historical_metrics": {
+        "sample_id": "sample_02_D2",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Which of the images uploaded in 2024-07-07 focus on a robotic arm?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.558918297290802,
+          "adversarial_target_cosine": 0.5967214107513428,
+          "target_cosine_gain": 0.03780311346054077,
+          "source_query_cosine": 0.2788500487804413,
+          "adversarial_query_cosine": 0.2787184417247772,
+          "query_cosine_gain": -0.0001316070556640625,
+          "source_adversarial_cosine": 0.7874720692634583
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 0.939235508441925,
+          "adversarial_target_l2_distance": 0.8980855345726013,
+          "target_l2_distance_reduction": 0.04114997386932373
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_03_D2",
+      "question": "Did Julian discuss ethical dilemmas in autonomous driving before or after raising concerns about robots in healthcare?",
+      "answer": "After.",
+      "source_image": "data/sample_03_D2/source.jpg",
+      "source_sha256": "5193a8921b5ee54bed37f519bb60f8413ded944e046b98e18533fe62326a6a73",
+      "target_image": "data/sample_03_D2/target.jpg",
+      "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+      "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+      "selection_score": 1.5707231909036636,
+      "phi_r": 0.20649553835391998,
+      "phi_contra": 0.7456910610198975,
+      "phi_c": 0.25430893898010254,
+      "historical_adversarial_image": "data/sample_03_D2/lucid_adversarial.png",
+      "historical_adversarial_sha256": "704fe63f10c154c9b2d087fea4478a989d5d06717549a4803f92c51fe2346b8b",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_03_D2\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "8aa46ad3ea892d2389bcf63fd3d86b0149164d7cb2226d3346bca7342632e144",
+      "historical_metrics": {
+        "sample_id": "sample_03_D2",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Did Julian discuss ethical dilemmas in autonomous driving before or after raising concerns about robots in healthcare?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.5694027543067932,
+          "adversarial_target_cosine": 0.7262272238731384,
+          "target_cosine_gain": 0.15682446956634521,
+          "source_query_cosine": 0.24722975492477417,
+          "adversarial_query_cosine": 0.21654777228832245,
+          "query_cosine_gain": -0.03068198263645172,
+          "source_adversarial_cosine": 0.5728636980056763
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 0.9280057549476624,
+          "adversarial_target_l2_distance": 0.7399634718894958,
+          "target_l2_distance_reduction": 0.1880422830581665
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_04_D2",
+      "question": "Did Julian express worries about job-skill obsolescence before or after discussing agricultural robots’ impact on small farmers?",
+      "answer": "Before.",
+      "source_image": "data/sample_04_D2/source.jpg",
+      "source_sha256": "665dd0b9710ceb21a55841132bf3ee5c60486390fc9af43c367c1b7c034b6ed9",
+      "target_image": "data/sample_04_D2/target.jpg",
+      "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+      "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+      "selection_score": 1.5897619426250458,
+      "phi_r": 0.21316636353731155,
+      "phi_contra": 0.7506382316350937,
+      "phi_c": 0.2493617683649063,
+      "historical_adversarial_image": "data/sample_04_D2/lucid_adversarial.png",
+      "historical_adversarial_sha256": "5959642aae9118109b195b31207c77869fc584e8b28119c3129626449ae237d5",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_04_D2\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "38f44e55893bcb3b36342adb9f62dd8985cecd38d932d3980757f6e0e558359b",
+      "historical_metrics": {
+        "sample_id": "sample_04_D2",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Did Julian express worries about job-skill obsolescence before or after discussing agricultural robots’ impact on small farmers?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.5508012175559998,
+          "adversarial_target_cosine": 0.6245221495628357,
+          "target_cosine_gain": 0.07372093200683594,
+          "source_query_cosine": 0.24420443177223206,
+          "adversarial_query_cosine": 0.2493085414171219,
+          "query_cosine_gain": 0.0051041096448898315,
+          "source_adversarial_cosine": 0.8408997058868408
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 0.9478384256362915,
+          "adversarial_target_l2_distance": 0.8665770888328552,
+          "target_l2_distance_reduction": 0.08126133680343628
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_05_D1_D2",
+      "question": "Did Julian raise concerns about ethical risks in AI before discussing ethical dilemmas in autonomous vehicles?",
+      "answer": "Yes.",
+      "source_image": "data/sample_05_D1_D2/source.jpg",
+      "source_sha256": "59825cb5532ea3a13516bfde2a31da953b32068f786f30f2f73367865ee838fb",
+      "target_image": "data/sample_05_D1_D2/target.jpg",
+      "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+      "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+      "selection_score": 1.590370275080204,
+      "phi_r": 0.2031174600124359,
+      "phi_contra": 0.7549011260271072,
+      "phi_c": 0.24509887397289276,
+      "historical_adversarial_image": "data/sample_05_D1_D2/lucid_adversarial.png",
+      "historical_adversarial_sha256": "055d4b094106315ae52f6333c68f1eec1da5aba2bee6c5d0864103b6a58953db",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_05_D1_D2\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "87534d1e5f8c5082c00b21163c0d440d96bf289f5a50deb0b2bd8ae6663d3f88",
+      "historical_metrics": {
+        "sample_id": "sample_05_D1_D2",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Did Julian raise concerns about ethical risks in AI before discussing ethical dilemmas in autonomous vehicles?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.5417487621307373,
+          "adversarial_target_cosine": 0.5818884968757629,
+          "target_cosine_gain": 0.040139734745025635,
+          "source_query_cosine": 0.25170618295669556,
+          "adversarial_query_cosine": 0.24691160023212433,
+          "query_cosine_gain": -0.004794582724571228,
+          "source_adversarial_cosine": 0.7838394641876221
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 0.9573414325714111,
+          "adversarial_target_l2_distance": 0.9144523739814758,
+          "target_l2_distance_reduction": 0.0428890585899353
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_06_D3",
+      "question": "How many photos are related to vehicles in the conversation of 2024-07-21? Please answer using an Arabic numeral (e.g., “2” instead of “Two”).",
+      "answer": "2",
+      "source_image": "data/sample_06_D3/source.jpg",
+      "source_sha256": "8fec7342e6c9fdea74efce637f59de095a8aed457f4f702f9023a5c016a0338e",
+      "target_image": "data/sample_06_D3/target.jpg",
+      "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+      "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+      "selection_score": 1.5924507230520248,
+      "phi_r": 0.24369658529758453,
+      "phi_contra": 0.7395016551017761,
+      "phi_c": 0.2604983448982239,
+      "historical_adversarial_image": "data/sample_06_D3/lucid_adversarial.png",
+      "historical_adversarial_sha256": "66e65f7f8e9b44dcfb8b3021e6ccde02fe5592bcb4538fd05d8d8797b631914b",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_06_D3\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "beb1aa4845fbc5254d698dd89629bc91d7901cc5ff915e3d07d444b4f62ddaa3",
+      "historical_metrics": {
+        "sample_id": "sample_06_D3",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "How many photos are related to vehicles in the conversation of 2024-07-21? Please answer using an Arabic numeral (e.g., “2” instead of “Two”).",
+        "cosine_metrics": {
+          "source_target_cosine": 0.4127187728881836,
+          "adversarial_target_cosine": 0.46047383546829224,
+          "target_cosine_gain": 0.04775506258010864,
+          "source_query_cosine": 0.257690966129303,
+          "adversarial_query_cosine": 0.27422940731048584,
+          "query_cosine_gain": 0.01653844118118286,
+          "source_adversarial_cosine": 0.8901379108428955
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 1.0837724208831787,
+          "adversarial_target_l2_distance": 1.0387744903564453,
+          "target_l2_distance_reduction": 0.0449979305267334
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_07_D3",
+      "question": "List all the brands related to autonomous vehicles that have discussed.",
+      "answer": "Tesla, Audi, Mercedes-Benz, Google, and Apple.",
+      "source_image": "data/sample_07_D3/source.jpg",
+      "source_sha256": "8fec7342e6c9fdea74efce637f59de095a8aed457f4f702f9023a5c016a0338e",
+      "target_image": "data/sample_07_D3/target.jpg",
+      "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+      "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+      "selection_score": 1.5696127489209175,
+      "phi_r": 0.21081984788179398,
+      "phi_contra": 0.7435171604156494,
+      "phi_c": 0.2564828395843506,
+      "historical_adversarial_image": "data/sample_07_D3/lucid_adversarial.png",
+      "historical_adversarial_sha256": "d014cba358d71446f3118e2227761c1beec44ae614104a1207459c39fce3c6c6",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "53264a70126d4bbfbeecfc1d2d1ec25291e00110dfceb085df121f63c0648907",
+      "historical_metrics": {
+        "sample_id": "sample_07_D3",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "List all the brands related to autonomous vehicles that have discussed.",
+        "cosine_metrics": {
+          "source_target_cosine": 0.4797419309616089,
+          "adversarial_target_cosine": 0.5016992688179016,
+          "target_cosine_gain": 0.021957337856292725,
+          "source_query_cosine": 0.26470962166786194,
+          "adversarial_query_cosine": 0.25617921352386475,
+          "query_cosine_gain": -0.008530408143997192,
+          "source_adversarial_cosine": 0.9180124402046204
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 1.0200570821762085,
+          "adversarial_target_l2_distance": 0.9982993602752686,
+          "target_l2_distance_reduction": 0.02175772190093994
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_08_D4",
+      "question": "Please list the applications of AI in cybersecurity as described by Julian.",
+      "answer": "Julian mentions that AI is used to detect and mitigate threats in real-time, analyze network traffic to identify anomalies, predict and prevent attacks, automate responses to threats, and assist in identifying insider threats.",
+      "source_image": "data/sample_08_D4/source.jpg",
+      "source_sha256": "67415dd433dcd3c990813b2278ca692fb378d8e65ce48bf47bfa826d4eb916b2",
+      "target_image": "data/sample_08_D4/target.jpg",
+      "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+      "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+      "selection_score": 1.5204992964863777,
+      "phi_r": 0.21397452801465988,
+      "phi_contra": 0.7226099073886871,
+      "phi_c": 0.27739009261131287,
+      "historical_adversarial_image": "data/sample_08_D4/lucid_adversarial.png",
+      "historical_adversarial_sha256": "79d41b5756d57b3259e915961b73da4a443911a65dea84b05ff86295b19722c8",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_08_D4\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "d316f575b26cfd74edb5b4edd1ecc67be9c8404f88abd7d1a51f4139db37dd7f",
+      "historical_metrics": {
+        "sample_id": "sample_08_D4",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Please list the applications of AI in cybersecurity as described by Julian.",
+        "cosine_metrics": {
+          "source_target_cosine": 0.5046162009239197,
+          "adversarial_target_cosine": 0.5637283325195312,
+          "target_cosine_gain": 0.05911213159561157,
+          "source_query_cosine": 0.2720274329185486,
+          "adversarial_query_cosine": 0.2729243338108063,
+          "query_cosine_gain": 0.0008969008922576904,
+          "source_adversarial_cosine": 0.8552218675613403
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 0.9953732490539551,
+          "adversarial_target_l2_distance": 0.934100329875946,
+          "target_l2_distance_reduction": 0.06127291917800903
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_09_D4",
+      "question": "Based on the conversation, why does Julian believe AI systems are effective in detecting cybersecurity threats?",
+      "answer": "Because they can analyze large volumes of network traffic, identify patterns and anomalies, and adapt to new types of attacks over time, which improves their detection capabilities.",
+      "source_image": "data/sample_09_D4/source.jpg",
+      "source_sha256": "c367b69be976373c0bd0bcb158cba998ebdd713a74fdda4eb24061944f959421",
+      "target_image": "data/sample_09_D4/target.jpg",
+      "target_sha256": "4000441ce04127592a981162e4d7a9782db7a2622c477b5f5914a2b266403956",
+      "target_text": "Here’s the first lotus photo I took. This lotus is stunning. The pink gradient on the petals is so delicate, almost like watercolor. The soft green background highlights the bloom beautifully, giving the whole image a serene, meditative feeling. It’s the kind of scene that makes you slow down and breathe a little deeper.",
+      "selection_score": 1.4780238643288612,
+      "phi_r": 0.2139902040362358,
+      "phi_contra": 0.7056134641170502,
+      "phi_c": 0.29438653588294983,
+      "historical_adversarial_image": "data/sample_09_D4/lucid_adversarial.png",
+      "historical_adversarial_sha256": "a69c4915f4f6264b7171d070b68d462a2088824b5451dea407bd43886d7923df",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_09_D4\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "f4f4f39b3b1dc682edad517a027f3b89838936a779aa9ec635107cefaab26bb6",
+      "historical_metrics": {
+        "sample_id": "sample_09_D4",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "Based on the conversation, why does Julian believe AI systems are effective in detecting cybersecurity threats?",
+        "cosine_metrics": {
+          "source_target_cosine": 0.36430874466896057,
+          "adversarial_target_cosine": 0.45083343982696533,
+          "target_cosine_gain": 0.08652469515800476,
+          "source_query_cosine": 0.21479617059230804,
+          "adversarial_query_cosine": 0.20546753704547882,
+          "query_cosine_gain": -0.009328633546829224,
+          "source_adversarial_cosine": 0.8393919467926025
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 1.1275560855865479,
+          "adversarial_target_l2_distance": 1.0480139255523682,
+          "target_l2_distance_reduction": 0.07954216003417969
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    },
+    {
+      "sample_id": "sample_10_D4",
+      "question": "When did the user take a cybersecurity lecture? Return in the format YYYY-MM-DD.",
+      "answer": "2024-08-05",
+      "source_image": "data/sample_10_D4/source.jpg",
+      "source_sha256": "67415dd433dcd3c990813b2278ca692fb378d8e65ce48bf47bfa826d4eb916b2",
+      "target_image": "data/sample_10_D4/target.jpg",
+      "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+      "target_text": "This magnolia was more white, with just a bit of pink at the center. I thought it was so pure-looking. A perfect contrast—the white petals framing the warm pink heart. It's like the flower is reminding us how subtlety can be powerful.",
+      "selection_score": 1.5714124888181686,
+      "phi_r": 0.21691901981830597,
+      "phi_contra": 0.7417973875999451,
+      "phi_c": 0.25820261240005493,
+      "historical_adversarial_image": "data/sample_10_D4/lucid_adversarial.png",
+      "historical_adversarial_sha256": "0daa5edd00ae09bc83a27568e5bdeff4a6d7a10c927c1c0cd78d513dc07d0676",
+      "historical_attack_metadata": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_10_D4\\attack_metrics.json",
+      "historical_attack_metadata_sha256": "1d9308ae8d79255515b280843cc9efdc7971b49d56756b60b6e74f644dc0de8e",
+      "historical_metrics": {
+        "sample_id": "sample_10_D4",
+        "encoder": "CLIP-B-32",
+        "encoder_model_id": "openai/clip-vit-base-patch32",
+        "embedding_dimension": 512,
+        "query_text": "When did the user take a cybersecurity lecture? Return in the format YYYY-MM-DD.",
+        "cosine_metrics": {
+          "source_target_cosine": 0.42797771096229553,
+          "adversarial_target_cosine": 0.49468523263931274,
+          "target_cosine_gain": 0.06670752167701721,
+          "source_query_cosine": 0.24100664258003235,
+          "adversarial_query_cosine": 0.2521612346172333,
+          "query_cosine_gain": 0.011154592037200928,
+          "source_adversarial_cosine": 0.7981338500976562
+        },
+        "distance_metrics": {
+          "source_target_l2_distance": 1.0696003437042236,
+          "adversarial_target_l2_distance": 1.005300760269165,
+          "target_l2_distance_reduction": 0.0642995834350586
+        }
+      },
+      "historical_steps": 1000,
+      "historical_epsilon": 0.06274509803921569,
+      "historical_step_size": 0.00196078431372549
+    }
+  ],
+  "data_files": [
+    {
+      "path": "D:\\Material\\Literature Reading\\code\\Mem-Gallery\\benchmark\\data\\dialog\\AI_Robotics_Automation_Future_Tech.json",
+      "sha256": "fb51fad8a80b3610d90eaced0bf01bb2250a7f486a8dc67e8e9eee88a4e55b8e"
+    },
+    {
+      "path": "D:\\Material\\Literature Reading\\code\\Mem-Gallery\\benchmark\\data\\dialog\\Technology_Ethics_Future_Society.json",
+      "sha256": "11d931289ddd6bd9bd59a5564ccf6494d4ef59a10cdc5f320fbcf4a863c27fa2"
+    },
+    {
+      "path": "D:\\Material\\Literature Reading\\code\\Mem-Gallery\\benchmark\\data\\dialog\\Parenting_Commuting_Hobbies_Travel_Gear.json",
+      "sha256": "88824a01e9a25ef49a7af63436651ec323910a81f3139be3796d398d101a892e"
+    },
+    {
+      "path": "D:\\Material\\Literature Reading\\code\\Mem-Gallery\\benchmark\\data\\dialog\\Home_Repair_Maintenance_Cleaning.json",
+      "sha256": "6c10293e51b5a9fa567eb8fd56bd9af52429b19a9aa945abd26f5cea6ed9f91c"
+    },
+    {
+      "path": "D:\\Material\\Literature Reading\\code\\Mem-Gallery\\benchmark\\data\\dialog\\Real_Estate_Home_Decor_DIY_Lifestyle.json",
+      "sha256": "ace411b22e74f80f9e25e5bf12279133b9895e2f38c9347581ae45541b740fcd"
+    }
+  ],
+  "vector_files": [
+    {
+      "sample_id": "sample_01_D1",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_01_D1\\source_vector.npy",
+      "sha256": "0ae3c42f0fe22787150d47cc528438ddb3ad81f2cb98ef1cb5ab7578cce99c4a"
+    },
+    {
+      "sample_id": "sample_01_D1",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_01_D1\\adversarial_vector.npy",
+      "sha256": "6ef7823b7cbe6fc6441b0fd6c143bda45f05e6466c9acd78b498a4d96344bc6a"
+    },
+    {
+      "sample_id": "sample_01_D1",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_01_D1\\target_vector.npy",
+      "sha256": "4a81245826cb27371ae0ffa29899c4887ba40a1fa7a1b3944581cb8aabfcef9b"
+    },
+    {
+      "sample_id": "sample_01_D1",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_01_D1\\query_vector.npy",
+      "sha256": "f17a3c1c8e9252429423f1f0fb5539ddb7a3acdf6db6763eb5812d2cf6465c36"
+    },
+    {
+      "sample_id": "sample_02_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\source_vector.npy",
+      "sha256": "df48d50708228bace6c59781f0819566caa55fd8a10fdb40c60896f6c738a714"
+    },
+    {
+      "sample_id": "sample_02_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\adversarial_vector.npy",
+      "sha256": "4706890c0ebaa68e3cfdff43df4d553ac18ccc050e213b9d863378f213de005b"
+    },
+    {
+      "sample_id": "sample_02_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\target_vector.npy",
+      "sha256": "4a81245826cb27371ae0ffa29899c4887ba40a1fa7a1b3944581cb8aabfcef9b"
+    },
+    {
+      "sample_id": "sample_02_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_02_D2\\query_vector.npy",
+      "sha256": "dc7fe9cf9aed34d94d42d1300312d4b8c28583ca00c305cee96baa51d0bb1b6b"
+    },
+    {
+      "sample_id": "sample_03_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_03_D2\\source_vector.npy",
+      "sha256": "c5dca3c7da96de9e8511dae25f2a493daba41b532ebcf55d4f12b4fa2f08a878"
+    },
+    {
+      "sample_id": "sample_03_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_03_D2\\adversarial_vector.npy",
+      "sha256": "a052de384359bdeb51a572b6fc2976a4e58d2bdb49342b6e02b159acacc1fbc5"
+    },
+    {
+      "sample_id": "sample_03_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_03_D2\\target_vector.npy",
+      "sha256": "369554d7af166cee9d5a48534db32d1ed654410201d5c734fbc3c0444ab37439"
+    },
+    {
+      "sample_id": "sample_03_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_03_D2\\query_vector.npy",
+      "sha256": "d62a0e3dce16effbe4368a1664bb07ce87ca865b837ec8210b644baef813bf88"
+    },
+    {
+      "sample_id": "sample_04_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_04_D2\\source_vector.npy",
+      "sha256": "c342dfa0455d1ca491a323c6e08238dda8db73b248e53fc615460d88149b5b62"
+    },
+    {
+      "sample_id": "sample_04_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_04_D2\\adversarial_vector.npy",
+      "sha256": "c3d7b86885a57b0f6d0b40185ece3271d67927bd9f406d5f17931a52e19e62c8"
+    },
+    {
+      "sample_id": "sample_04_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_04_D2\\target_vector.npy",
+      "sha256": "369554d7af166cee9d5a48534db32d1ed654410201d5c734fbc3c0444ab37439"
+    },
+    {
+      "sample_id": "sample_04_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_04_D2\\query_vector.npy",
+      "sha256": "3da0a59cf14beb3c7871f7e3e4e1dd46c4f95a0f88626c64f72f6a8784e25b2b"
+    },
+    {
+      "sample_id": "sample_05_D1_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_05_D1_D2\\source_vector.npy",
+      "sha256": "c9949479ce247c335feb6a06e7fb92420c272390d4cc8706cb86e796d9132738"
+    },
+    {
+      "sample_id": "sample_05_D1_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_05_D1_D2\\adversarial_vector.npy",
+      "sha256": "d3b4dbefc8409ff29224837d65a678645df297792ede702e06016b2c188d6a2d"
+    },
+    {
+      "sample_id": "sample_05_D1_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_05_D1_D2\\target_vector.npy",
+      "sha256": "4a81245826cb27371ae0ffa29899c4887ba40a1fa7a1b3944581cb8aabfcef9b"
+    },
+    {
+      "sample_id": "sample_05_D1_D2",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_05_D1_D2\\query_vector.npy",
+      "sha256": "74ddcef9800f11cef8222fd33031d13b336936f149729190e0e578b6a2f63ae3"
+    },
+    {
+      "sample_id": "sample_06_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_06_D3\\source_vector.npy",
+      "sha256": "e45f742b1fa525df5652793061155429930e8ce16c85bf2444135ecb94eeb2d1"
+    },
+    {
+      "sample_id": "sample_06_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_06_D3\\adversarial_vector.npy",
+      "sha256": "68754ae0bbcd338fdaa70c0a8f476fb3e7255dd9574523975b6cffb8729f1309"
+    },
+    {
+      "sample_id": "sample_06_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_06_D3\\target_vector.npy",
+      "sha256": "4a81245826cb27371ae0ffa29899c4887ba40a1fa7a1b3944581cb8aabfcef9b"
+    },
+    {
+      "sample_id": "sample_06_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_06_D3\\query_vector.npy",
+      "sha256": "7a7afeb80a4f5969cab79bd74c3936ccfd6c24f78cbe2063b472e34325b5c15c"
+    },
+    {
+      "sample_id": "sample_07_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\source_vector.npy",
+      "sha256": "e45f742b1fa525df5652793061155429930e8ce16c85bf2444135ecb94eeb2d1"
+    },
+    {
+      "sample_id": "sample_07_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\adversarial_vector.npy",
+      "sha256": "152f187c3d238b3b767e96d589c1fd78fa1de26f41057e9813cf7ad79f810100"
+    },
+    {
+      "sample_id": "sample_07_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\target_vector.npy",
+      "sha256": "369554d7af166cee9d5a48534db32d1ed654410201d5c734fbc3c0444ab37439"
+    },
+    {
+      "sample_id": "sample_07_D3",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_07_D3\\query_vector.npy",
+      "sha256": "f062c4471c2cb6799728148baf1452f65b028915b1487f53e4710931dbeb1864"
+    },
+    {
+      "sample_id": "sample_08_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_08_D4\\source_vector.npy",
+      "sha256": "73121b4ab42a2f59992ad58c833dbcc51739fdc4bf2b08b5bb2345a86284f972"
+    },
+    {
+      "sample_id": "sample_08_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_08_D4\\adversarial_vector.npy",
+      "sha256": "7387e8ec8b3f2bbe5a0c615e78a461e4be0525996b8b6072b038e3fe8a33007e"
+    },
+    {
+      "sample_id": "sample_08_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_08_D4\\target_vector.npy",
+      "sha256": "369554d7af166cee9d5a48534db32d1ed654410201d5c734fbc3c0444ab37439"
+    },
+    {
+      "sample_id": "sample_08_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_08_D4\\query_vector.npy",
+      "sha256": "fd0f48b245e94740d4a5196d402efa802f855bf23333dd42ab98e9f9384b18a0"
+    },
+    {
+      "sample_id": "sample_09_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_09_D4\\source_vector.npy",
+      "sha256": "34f882765a5226e9cc1fc592a1f894d6e96e9f25af47211a7dac80a9864668b0"
+    },
+    {
+      "sample_id": "sample_09_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_09_D4\\adversarial_vector.npy",
+      "sha256": "cc1b117d4034dd513eec8ef0a5907b230bd52f057aef94b0af38b489ce56d169"
+    },
+    {
+      "sample_id": "sample_09_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_09_D4\\target_vector.npy",
+      "sha256": "369554d7af166cee9d5a48534db32d1ed654410201d5c734fbc3c0444ab37439"
+    },
+    {
+      "sample_id": "sample_09_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_09_D4\\query_vector.npy",
+      "sha256": "6ada0db7a419155fd51837453257e3ad8a8f98d7f1bac8b0f55244f49d570124"
+    },
+    {
+      "sample_id": "sample_10_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_10_D4\\source_vector.npy",
+      "sha256": "73121b4ab42a2f59992ad58c833dbcc51739fdc4bf2b08b5bb2345a86284f972"
+    },
+    {
+      "sample_id": "sample_10_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_10_D4\\adversarial_vector.npy",
+      "sha256": "9118bcf8fd9da7302605918f2806a80c97ad05ba5386264af2b41891f30e18e2"
+    },
+    {
+      "sample_id": "sample_10_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_10_D4\\target_vector.npy",
+      "sha256": "4a81245826cb27371ae0ffa29899c4887ba40a1fa7a1b3944581cb8aabfcef9b"
+    },
+    {
+      "sample_id": "sample_10_D4",
+      "path": "D:\\Material\\Literature Reading\\code\\lucid-rag\\outputs\\exp_10_samples\\sample_10_D4\\query_vector.npy",
+      "sha256": "73fa2d7dd518bf87254d2a06cc6a445bf2df0477e264b239e8f36174edfb625f"
+    }
+  ],
+  "current_environment": {
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "transformers": "4.51.3",
+    "open_clip_torch": "3.3.0",
+    "numpy": "2.4.4",
+    "pillow": "12.2.0",
+    "python_executable": "D:\\Anaconda\\envs\\dual-visual\\python.exe",
+    "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "gpu_memory_mib": 8151,
+    "driver": "616.64",
+    "note": "current environment only; no model inference performed"
+  }
+}
