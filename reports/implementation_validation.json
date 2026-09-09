@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-09",
+  "status": "implementation_selection_parity_and_one_sample_smoke_passed_formal_experiment_not_run",
+  "formal_experiment_run": false,
+  "test_scope": {
+    "requested_attack_sample_count": 1,
+    "sample_id": "sample_01_D1",
+    "methods": [
+      "fair_pixel",
+      "frequency"
+    ],
+    "steps_per_method": 1,
+    "repetitions_per_method": 1,
+    "note": "The ten-row recomputation was a read-only selection compatibility check, not ten attack experiments."
+  },
+  "automatic_validation": {
+    "design_required_files": 7,
+    "frozen_manifest_rows": 10,
+    "reference_content_checks": 97,
+    "unit_tests_passed": 51,
+    "unit_tests_failed": 0,
+    "bytecode_compilation": "passed",
+    "executable_config_and_frozen_image_hashes": "passed"
+  },
+  "selection_parity": {
+    "status": "match",
+    "candidate_count": 217,
+    "query_count": 35,
+    "rows_recomputed": 10,
+    "matching_rows": 10,
+    "mismatching_rows": 0,
+    "attack_experiments_run": 0,
+    "output": "outputs/selection_parity_final.json"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "cuda_runtime": "12.8",
+    "numpy": "2.4.4",
+    "pillow": "12.2.0",
+    "open_clip_torch": "3.3.0",
+    "transformers": "4.51.3",
+    "device": "NVIDIA GeForce RTX 5060 Laptop GPU"
+  },
+  "surrogates": [
+    {
+      "name": "ViT-B-16",
+      "pretrained": "openai",
+      "revision": "977e3dd0ec55ab8da155f2fbeb6b5f54948b6e3d",
+      "weight_sha256": "4b8699299b1e8997753c64b052ba32031449d5d853f55a039148560ee02b820f",
+      "global_shape": [1, 512],
+      "local_shape": [1, 196, 768]
+    },
+    {
+      "name": "ViT-B-32",
+      "pretrained": "openai",
+      "revision": "a6f597a30f7b82c51704746581f9a4e41421e878",
+      "weight_sha256": "e6d1bd7789aa45192b3bf90570a789b478bae1b74ebcce7eddd908e83a2b7c31",
+      "global_shape": [1, 512],
+      "local_shape": [1, 49, 768]
+    },
+    {
+      "name": "ViT-B-32",
+      "pretrained": "laion2b_s34b_b79k",
+      "revision": "1a25a446712ba5ee05982a381eed697ef9b435cf",
+      "weight_sha256": "ac4f8c4b88af6d963118cbf40ad93176d092abbedfcb752601ae1866352656e6",
+      "global_shape": [1, 512],
+      "local_shape": [1, 49, 768]
+    }
+  ],
+  "primary_evaluator": {
+    "model_id": "openai/clip-vit-base-patch32",
+    "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "weight_sha256": "a63082132ba4f97a80bea76823f544493bffa8082296d62d71581a4feff1576f",
+    "weight_bytes": 605247071,
+    "precision": "fp16",
+    "embedding_dimension": 512,
+    "processor_use_fast": false
+  },
+  "one_step_smoke": {
+    "sample_id": "sample_01_D1",
+    "source_shape_bchw": [1, 3, 720, 1280],
+    "target_shape_bchw": [1, 3, 500, 667],
+    "source_sha256": "e9068df03df89461a9839baa50bae90db0a4c4ef44364f74201f460747858a58",
+    "target_sha256": "665f3a5a0bf83afdaec05e4fe194e00ccd293955cc657cd1d0eb5b851add8cea",
+    "implementation_content_identity": "4e2a2941161b1d3863e927ecaae37a3da2806eb30504455806920c4e79b4760c",
+    "evaluation_implementation_content_identity": "4e2a2941161b1d3863e927ecaae37a3da2806eb30504455806920c4e79b4760c",
+    "run_comparability_signature": "86dfb170d8d3cb29bf16fe1ff7fe85825da08f6349b2d73c8925e250e05d85ab",
+    "all_paired_run_conditions_comparable": true,
+    "equal_time_budgets_compatible": false,
+    "timing_repetitions_required": 3,
+    "timing_repetitions_sufficient": false,
+    "methods": {
+      "fair_pixel": {
+        "output_directory": "outputs/release_smoke_final_fair_pixel_1step",
+        "generation_status": "complete",
+        "evaluation_status": "complete",
+        "steps_completed": 1,
+        "initial_objective": 0.5599498748779297,
+        "final_recomputed_objective": 0.5876033902168274,
+        "optimization_loop_seconds": 1.4155814000005194,
+        "total_attack_seconds": 4.059672800000044,
+        "framework_peak_allocated_bytes": 2002968576,
+        "decoded_max_pixel_difference_levels": 1,
+        "decoded_mean_absolute_pixel_difference_levels": 0.567730396412037,
+        "primary_target_cosine_gain": 0.01728278398513794,
+        "primary_query_cosine_gain": -0.0014649033546447754,
+        "primary_source_adversarial_cosine": 0.9890711307525635,
+        "adversarial_png_sha256": "7da5b4bb50cb6cba583314873cca01f347d388e8595199d103ed9a3124109429",
+        "attack_metrics_sha256": "d2b8209cf8fde64efe38aece822c4fd61acaa147b0db3b698d8cc2f27b5164f4",
+        "vector_evaluation_sha256": "e04141ab068d93dfb175ae3026288ed5fb5584b6062c9d803ea977b8831b1456",
+        "pipeline_stage_seconds_excluding_command_idle": 24.784624699999767
+      },
+      "frequency": {
+        "output_directory": "outputs/release_smoke_final_frequency_1step",
+        "generation_status": "complete",
+        "evaluation_status": "complete",
+        "steps_completed": 1,
+        "axis_ratio": 0.25,
+        "coefficient_count": 172800,
+        "spatial_parameter_count": 2764800,
+        "initial_objective": 0.5599498748779297,
+        "final_recomputed_objective": 0.5520098209381104,
+        "raw_synthesized_linf": 0.0019607844296842813,
+        "optimization_loop_seconds": 1.108339899999919,
+        "total_attack_seconds": 3.386360300000888,
+        "framework_peak_allocated_bytes": 2004091904,
+        "decoded_max_pixel_difference_levels": 0,
+        "decoded_mean_absolute_pixel_difference_levels": 0.0,
+        "primary_target_cosine_gain": 0.0,
+        "primary_query_cosine_gain": 0.0,
+        "primary_source_adversarial_cosine": 1.0,
+        "adversarial_png_sha256": "ec5640f4ed2049995e2b8724a957385f24469ad60fd28b57a3e2eb1034901782",
+        "attack_metrics_sha256": "2490eba00e8eceeef66b3d7aabb64cba7d73383b79b3e2ba650f18591bceda1d",
+        "vector_evaluation_sha256": "64444e73a267717634a10fdd5fc4e6408e55c23c8e7bef21db1b13c53304fcfc",
+        "pipeline_stage_seconds_excluding_command_idle": 21.860349399998086
+      }
+    },
+    "paired_assessment": {
+      "target_gain_advantage_frequency_minus_fair_pixel": -0.01728278398513794,
+      "single_run_total_attack_time_ratio": 0.8341461164064383,
+      "single_run_peak_allocated_memory_ratio": 1.000560831564439,
+      "quality_protection_passed": true,
+      "same_time_route_passed": false,
+      "equivalent_effect_route_passed": false,
+      "either_predeclared_route_passed": false,
+      "conclusion": "The result does not prove the predeclared continuation threshold, and timing conditions are insufficient."
+    },
+    "artifacts": {
+      "fair_pixel_run_manifest": "outputs/release_smoke_final_fair_pixel_1step/run_manifest.json",
+      "frequency_run_manifest": "outputs/release_smoke_final_frequency_1step/run_manifest.json",
+      "summary": "outputs/release_smoke_final_summary/summary.json",
+      "sample_results_csv": "outputs/release_smoke_final_summary/results.csv",
+      "run_costs_csv": "outputs/release_smoke_final_summary/run_costs.csv"
+    },
+    "interpretation": "The real model pipeline passed for one sample and one step per method; this is not effectiveness, speed, or memory evidence."
+  },
+  "pending": [
+    "formal_25_step_smoke",
+    "formal_1000_step_three_repetition_timing_and_memory",
+    "frequency_effectiveness"
+  ]
+}

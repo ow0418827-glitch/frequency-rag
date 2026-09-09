@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frequency-rag"
+version = "0.1.0"
+description = "频域参数化图像向量扰动与公平像素对照实验框架"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=9",
+  "torch>=2.1",
+]
+
+[project.optional-dependencies]
+models = [
+  "open-clip-torch>=3.0",
+  "transformers>=4.45",
+]
+test = ["pytest>=8"]
+
+[project.scripts]
+frequency-rag = "frequency_rag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra -p no:cacheprovider"

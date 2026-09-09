@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "status": "implemented_not_benchmarked",
+  "reference_root": "D:\\Material\\Literature Reading\\code\\lucid-rag",
+  "reference_manifest": "manifests/reference_snapshot.json",
+  "seed": 42,
+  "device": "cuda",
+  "attack_precision": "fp32",
+  "memgallery_root": "D:\\Material\\Literature Reading\\code\\Mem-Gallery",
+  "dataset": "AI_Robotics_Automation_Future_Tech",
+  "selection": {
+    "mode": "strict_reference_compatibility",
+    "freeze_existing_ten": true,
+    "candidate_domains": [
+      "AI_Robotics_Automation_Future_Tech",
+      "Technology_Ethics_Future_Society",
+      "Parenting_Commuting_Hobbies_Travel_Gear",
+      "Home_Repair_Maintenance_Cleaning",
+      "Real_Estate_Home_Decor_DIY_Lifestyle"
+    ],
+    "retrieval_weight": 1.0,
+    "contradiction_weight": 2.0,
+    "correct_alignment_weight": 0.5,
+    "lexical_penalty": 1000000.0,
+    "on_topic_quantile_active": false,
+    "caption_source": "user_plus_assistant",
+    "preserve_duplicate_source_questions": true
+  },
+  "attack": {
+    "epsilon": 0.06274509803921569,
+    "spatial_step_size": 0.00196078431372549,
+    "reference_steps": 1000,
+    "initialization": "zero",
+    "clusters": 10,
+    "cluster_iterations": 100,
+    "sinkhorn_iterations": 100,
+    "sinkhorn_regularization": 0.1,
+    "sinkhorn_tolerance": 0.01,
+    "detach_transport_plan": true,
+    "local_weight": 0.2,
+    "text_weight": 1.0,
+    "text_model_index": 1,
+    "log_every": 50,
+    "model_weight_update": "softmax_negative_preupdate_global_similarity"
+  },
+  "surrogates": [
+    {
+      "name": "ViT-B-16",
+      "pretrained": "openai",
+      "hf_repo": "timm/vit_base_patch16_clip_224.openai"
+    },
+    {
+      "name": "ViT-B-32",
+      "pretrained": "openai",
+      "hf_repo": "timm/vit_base_patch32_clip_224.openai"
+    },
+    {
+      "name": "ViT-B-32",
+      "pretrained": "laion2b_s34b_b79k",
+      "hf_repo": "laion/CLIP-ViT-B-32-laion2B-s34B-b79K"
+    }
+  ],
+  "frequency": {
+    "transform": "orthonormal_dct_ii",
+    "parameterization": "compact_rgb_coefficients",
+    "height_width": "original_decoded_source",
+    "initial_axis_ratio": 0.25,
+    "development_axis_ratios": [
+      0.125,
+      0.25,
+      0.5
+    ],
+    "coefficient_direction": "sign_of_coefficient_gradient",
+    "spatial_direction_normalization": "linf",
+    "coefficient_feasibility": "radial_scale_synthesized_linf",
+    "image_feasibility": "clip_0_1",
+    "constant_component": true,
+    "final_saved_image_strictly_bandlimited": false,
+    "progressive": {
+      "enabled": false,
+      "time_fractions": [
+        0.0,
+        0.3,
+        0.7
+      ],
+      "axis_ratios": [
+        0.125,
+        0.25,
+        0.5
+      ],
+      "new_coefficient_initialization": "zero"
+    }
+  },
+  "shared_engineering": {
+    "cache_target_features": true,
+    "cache_target_cluster_centers": true,
+    "load_surrogates_once": true,
+    "sequential_surrogate_gradients": true,
+    "separate_selection_generation_evaluation": true,
+    "mixed_precision_enabled": false
+  },
+  "evaluation": {
+    "primary_encoder": "CLIP-B-32",
+    "primary_model_id": "openai/clip-vit-base-patch32",
+    "embedding_dimension": 512,
+    "precision_cuda": "fp16",
+    "precision_cpu": "fp32",
+    "read_saved_png": true,
+    "use_primary_evaluator_gradient": false,
+    "additional_encoders_enabled": false,
+    "optional_existing_encoders": [
+      "SigLIP",
+      "CLIP-336",
+      "GME"
+    ]
+  },
+  "experiment": {
+    "smoke_steps": 25,
+    "development_unique_sources": 2,
+    "development_max_steps": 200,
+    "compatibility_rows": 10,
+    "optional_validation_max_unique_sources": 20,
+    "timing_repetitions": 3,
+    "equal_time_reference": "median_fair_pixel_1000_step_loop_per_sample",
+    "checkpoints_budget_fractions": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "report_preparation_and_total_attack": true,
+    "report_end_to_end": true,
+    "online_evaluator_stopping_enabled": false
+  },
+  "acceptance": {
+    "same_time_mean_target_gain_advantage": 0.01,
+    "same_time_total_attack_ratio_max": 1.05,
+    "same_time_peak_memory_ratio_max": 1.05,
+    "equivalent_effect_cosine_tolerance": 0.005,
+    "equivalent_effect_reach_rate_min": 0.9,
+    "equivalent_effect_median_total_attack_time_ratio_max": 0.8,
+    "mean_query_cosine_drop_max": 0.01,
+    "mean_source_adversarial_cosine_drop_max": 0.02,
+    "decoded_max_pixel_difference": 16,
+    "exploratory_memory_reduction_fraction": 0.2
+  },
+  "runtime": {
+    "allow_downloads": false,
+    "allow_device_fallback": false,
+    "require_true_local_tokens": true,
+    "hash_model_weights": true,
+    "cache_directory": "outputs/cache",
+    "device_memory_sample_interval_seconds": 0.05
+  },
+  "pending_verification": [
+    "formal_25_step_smoke",
+    "formal_1000_step_timing_and_memory",
+    "frequency_effectiveness"
+  ]
+}

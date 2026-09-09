@@ -1,0 +1,31 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Pytest & Test artifacts
+.pytest_cache/
+.pytest*/
+.pytest-tmp/
+
+# Outputs & logs
+outputs/
+*.log
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
