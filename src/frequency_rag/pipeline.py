@@ -165,7 +165,7 @@ def generate_frozen_run(
         {
             "status": "frozen_for_execution",
             "source_manifest": str(resolved_manifest),
-            "source_manifest_sha256": sha256_file(resolved_manifest),
+            "source_manifest_sha256": sha256_file(resolved_manifest) if resolved_manifest.is_file() else "",
             "source_manifest_status": source_manifest.get("status"),
             "sample_count": len(samples),
             "samples": [sample.raw for sample in samples],
@@ -299,7 +299,7 @@ def generate_frozen_run(
         "generated_sample_count": succeeded,
         "failed_sample_count": len(samples) - succeeded,
         "source_manifest": str(resolved_manifest),
-        "source_manifest_sha256": sha256_file(resolved_manifest),
+        "source_manifest_sha256": sha256_file(resolved_manifest) if resolved_manifest.is_file() else "",
         "selection_stage": {
             "mode": "pre_frozen_shared_manifest",
             "selection_model_loaded_during_generation": False,

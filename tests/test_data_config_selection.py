@@ -28,6 +28,18 @@ def test_executable_config_loads_and_design_config_is_rejected() -> None:
         load_config(root / "configs" / "design_defaults.json")
 
 
+@pytest.mark.parametrize("iterations", [0, -1, 17, True, 3.7, "3"])
+def test_frequency_reprojection_iteration_limit_is_validated(
+    cpu_config, iterations: object
+) -> None:
+    invalid_frequency = replace(
+        cpu_config.frequency,
+        maximum_reprojection_iterations=iterations,
+    )
+    with pytest.raises(ValueError, match="maximum_reprojection_iterations"):
+        replace(cpu_config, frequency=invalid_frequency).validate()
+
+
 def test_frozen_manifest_preserves_ten_rows_and_duplicate_sources() -> None:
     root = Path(__file__).resolve().parents[1]
     _, samples = load_frozen_manifest(
@@ -157,12 +169,12 @@ def test_config_rejects_silent_device_or_evaluator_behavior(cpu_config) -> None:
 
 def test_load_frozen_manifest_with_max_samples() -> None:
     root = Path(__file__).resolve().parents[1]
-    manifest_path = root / "data" / "manifest.json"
-    if manifest_path.is_file():
-        _, samples_5 = load_frozen_manifest(manifest_path, verify_hashes=False, max_samples=5)
-        assert len(samples_5) == 5
-        _, samples_10 = load_frozen_manifest(manifest_path, verify_hashes=False, max_samples=10)
-        assert len(samples_10) == 10
+    data_dir = root / "data"
+    if data_dir.is_dir():
+        _, samples_3 = load_frozen_manifest(data_dir, verify_hashes=False, max_samples=3)
+        assert len(samples_3) == 3
+        _, samples_all = load_frozen_manifest(data_dir, verify_hashes=False, max_samples=10)
+        assert len(samples_all) == 5
 
 
 def test_load_samples_from_data_dir() -> None:
@@ -172,3 +184,12 @@ def test_load_samples_from_data_dir() -> None:
         _, samples = load_frozen_manifest(data_dir, verify_hashes=False, max_samples=3)
         assert len(samples) == 3
 
+
+def test_load_lucid_rag_pairs_directory_directly() -> None:
+    lucid_dir = Path(r"D:\Material\Literature Reading\code\lucid-rag\data")
+    if lucid_dir.is_dir():
+        _, samples = load_frozen_manifest(lucid_dir, verify_hashes=True)
+        assert len(samples) == 5
+        assert samples[0].sample_id.startswith("pair_")
+        assert samples[0].source_image.is_file()
+        assert samples[0].target_image.is_file()

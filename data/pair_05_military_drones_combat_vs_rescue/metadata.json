@@ -1,0 +1,16 @@
+{
+  "pair_id": "pair_05_military_drones_combat_vs_rescue",
+  "theme": "军用无人机伦理定位矛盾（致命打击作战无人机 vs. 搜救侦察人道无人机）",
+  "dataset": "AI_Robotics_Automation_Future_Tech",
+  "question": "Which image discussed autonomous military drones capable of making life-or-death combat decisions?",
+  "ground_truth_answer": "D7:IMG_001 (Combat / Lethal Drone)",
+  "source_image": "D7_IMG_001.jpg",
+  "source_session": "D7 (2024-09-30)",
+  "source_round": "D7:3",
+  "source_text": "Autonomous military drones are a controversial topic. Their ability to make life-or-death decisions raises serious ethical concerns.",
+  "target_image": "D7_IMG_002.jpg",
+  "target_session": "D7 (2024-09-30)",
+  "target_round": "D7:8",
+  "target_text": "Autonomous drones could save lives by performing reconnaissance or neutralizing threats without endangering soldiers with proper oversight.",
+  "contradiction_logic": "在 2024-09-30 的同一场无人机伦理辩论中，一张图代表具有自主杀伤裁决权的致命武器，另一张图代表用于搜救与侦察的保护性人道装备，构成“杀伤”与“救援”的价值观与功能对立。"
+}

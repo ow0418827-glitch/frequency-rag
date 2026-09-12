@@ -34,6 +34,9 @@ def _default_manifest(config: ProjectConfig, data_dir: Path | None = None) -> Pa
     candidate = project_root / "data" / "manifest.json"
     if candidate.is_file():
         return candidate
+    data_dir_candidate = project_root / "data"
+    if data_dir_candidate.is_dir():
+        return data_dir_candidate
     return config.resolve_project_path(config.reference_manifest)
 
 
@@ -214,7 +217,7 @@ def _doctor(config: ProjectConfig, *, load_models: bool) -> int:
         "memgallery_root": config.memgallery_root,
         "memgallery_exists": Path(config.memgallery_root).is_dir(),
         "reference_manifest": str(_default_manifest(config)),
-        "reference_manifest_exists": _default_manifest(config).is_file(),
+        "reference_manifest_exists": _default_manifest(config).exists(),
         "surrogate_weights": [],
     }
     missing_weights = False

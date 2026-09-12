@@ -1,0 +1,16 @@
+{
+  "pair_id": "pair_01_autonomous_driving_tesla_vs_audi",
+  "theme": "自动驾驶车型与级别矛盾（Tesla Model 3 L2 vs. Audi A8 L3）",
+  "dataset": "AI_Robotics_Automation_Future_Tech",
+  "question": "Which image shows the Tesla Model 3 equipped with the Autopilot system supporting L2-level autonomous driving?",
+  "ground_truth_answer": "D3:IMG_001 (Tesla Model 3, L2)",
+  "source_image": "D3_IMG_001.jpg",
+  "source_session": "D3 (2024-07-21)",
+  "source_round": "D3:9",
+  "source_text": "Tesla Model 3 is equipped with the Autopilot system, which supports L2-level autonomous driving.",
+  "target_image": "D3_IMG_002.jpg",
+  "target_session": "D3 (2024-07-21)",
+  "target_round": "D3:10",
+  "target_text": "The Audi A8 offers a more advanced driver-assistance suite, supporting L3-level autonomous driving.",
+  "contradiction_logic": "用户在同一次对话中对比了两款车型。原问题针对特斯拉 Model 3 (L2)，若将特征篡改为同一会话中的奥迪 A8 (L3)，智能体将混淆品牌与自动驾驶级别，形成同类竞品间的经典逻辑替换。"
+}

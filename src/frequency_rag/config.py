@@ -163,7 +163,9 @@ class FrequencyConfig:
     development_axis_ratios: tuple[float, ...] = (0.125, 0.25, 0.5)
     coefficient_direction: str = "sign_of_coefficient_gradient"
     spatial_direction_normalization: str = "linf"
-    coefficient_feasibility: str = "radial_scale_synthesized_linf"
+    coefficient_feasibility: str = "spatial_clip_low_frequency_reproject_with_radial_fallback"
+    maximum_reprojection_iterations: int = 1
+    reprojection_tolerance: float = 1e-7
     image_feasibility: str = "clip_0_1"
     constant_component: bool = True
     final_saved_image_strictly_bandlimited: bool = False
@@ -179,7 +181,14 @@ class FrequencyConfig:
             development_axis_ratios=tuple(float(x) for x in raw.get("development_axis_ratios", (0.125, 0.25, 0.5))),
             coefficient_direction=str(raw.get("coefficient_direction", "sign_of_coefficient_gradient")),
             spatial_direction_normalization=str(raw.get("spatial_direction_normalization", "linf")),
-            coefficient_feasibility=str(raw.get("coefficient_feasibility", "radial_scale_synthesized_linf")),
+            coefficient_feasibility=str(
+                raw.get(
+                    "coefficient_feasibility",
+                    "spatial_clip_low_frequency_reproject_with_radial_fallback",
+                )
+            ),
+            maximum_reprojection_iterations=raw.get("maximum_reprojection_iterations", 1),
+            reprojection_tolerance=float(raw.get("reprojection_tolerance", 1e-7)),
             image_feasibility=str(raw.get("image_feasibility", "clip_0_1")),
             constant_component=bool(raw.get("constant_component", True)),
             final_saved_image_strictly_bandlimited=bool(raw.get("final_saved_image_strictly_bandlimited", False)),
@@ -193,7 +202,10 @@ class FrequencyConfig:
             "height_width": (self.height_width, "original_decoded_source"),
             "coefficient_direction": (self.coefficient_direction, "sign_of_coefficient_gradient"),
             "spatial_direction_normalization": (self.spatial_direction_normalization, "linf"),
-            "coefficient_feasibility": (self.coefficient_feasibility, "radial_scale_synthesized_linf"),
+            "coefficient_feasibility": (
+                self.coefficient_feasibility,
+                "spatial_clip_low_frequency_reproject_with_radial_fallback",
+            ),
             "image_feasibility": (self.image_feasibility, "clip_0_1"),
         }
         wrong = [name for name, (actual, wanted) in expected.items() if actual != wanted]
@@ -203,6 +215,14 @@ class FrequencyConfig:
             raise ValueError("frequency.initial_axis_ratio 必须位于 (0, 1]。")
         if any(not 0 < value <= 1 for value in self.development_axis_ratios):
             raise ValueError("开发频率比例必须位于 (0, 1]。")
+        if (
+            isinstance(self.maximum_reprojection_iterations, bool)
+            or not isinstance(self.maximum_reprojection_iterations, int)
+            or not 1 <= self.maximum_reprojection_iterations <= 16
+        ):
+            raise ValueError("frequency.maximum_reprojection_iterations 必须位于 [1, 16]。")
+        if not math.isfinite(self.reprojection_tolerance) or self.reprojection_tolerance < 0:
+            raise ValueError("frequency.reprojection_tolerance 必须为有限非负数。")
         if self.final_saved_image_strictly_bandlimited:
             raise ValueError("范围裁剪和整数量化后不能保证落盘图片严格限频。")
         self.progressive.validate()

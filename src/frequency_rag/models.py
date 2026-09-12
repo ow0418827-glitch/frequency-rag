@@ -79,10 +79,10 @@ def resolve_hf_cached_weight(
             revision = main_ref.read_text(encoding="utf-8").strip()
             candidate = repository / "snapshots" / revision / filename
             if candidate.is_file():
-                return candidate.resolve()
+                return candidate
         snapshots = repository / "snapshots"
         if snapshots.exists():
-            matches.extend(path.resolve() for path in snapshots.glob(f"*/{filename}") if path.is_file())
+            matches.extend(path for path in snapshots.glob(f"*/{filename}") if path.is_file())
     return sorted(matches, key=str)[-1] if matches else None
 
 
@@ -120,6 +120,56 @@ def _revision_from_weight_path(path: Path | None) -> str | None:
         return None
     return parts[index + 1] if index + 1 < len(parts) else None
 
+def _is_safetensors_file(path: str | Path | None) -> bool:
+    if not path:
+        return False
+    path_obj = Path(path)
+    if path_obj.name.endswith(".safetensors") or str(path).endswith(".safetensors"):
+        return True
+    try:
+        if path_obj.is_file():
+            with open(path_obj, "rb") as f:
+                header = f.read(9)
+            if len(header) >= 9:
+                import struct
+                header_size = struct.unpack("<Q", header[:8])[0]
+                if 0 < header_size < 100 * 1024 * 1024 and header[8:9] == b"{":
+                    return True
+    except Exception:
+        pass
+    return False
+
+
+def _patch_open_clip_safetensors() -> None:
+    try:
+        import open_clip.factory
+    except ImportError:
+        return
+
+    orig_load_state_dict = getattr(open_clip.factory, "load_state_dict", None)
+    if orig_load_state_dict is None or getattr(orig_load_state_dict, "_safetensors_patched", False):
+        return
+
+    def safe_load_state_dict(checkpoint_path: str, device="cpu", weights_only=True):
+        if _is_safetensors_file(checkpoint_path):
+            from safetensors.torch import load_file
+            checkpoint = load_file(str(checkpoint_path), device=str(device))
+            if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
+                state_dict = checkpoint["state_dict"]
+            else:
+                state_dict = checkpoint
+            if next(iter(state_dict.items()))[0].startswith("module."):
+                state_dict = {k[7:]: v for k, v in state_dict.items()}
+            return state_dict
+
+        try:
+            return orig_load_state_dict(checkpoint_path, device=device, weights_only=weights_only)
+        except TypeError:
+            return orig_load_state_dict(checkpoint_path, device=device)
+
+    safe_load_state_dict._safetensors_patched = True
+    open_clip.factory.load_state_dict = safe_load_state_dict
+
 
 class OpenCLIPSurrogate:
     """参考项目代理模型的独立兼容包装，并显式拒绝局部特征静默回退。"""
@@ -150,7 +200,7 @@ class OpenCLIPSurrogate:
 
         weight_path: Path | None = None
         if config.weight_path:
-            weight_path = Path(config.weight_path).resolve()
+            weight_path = Path(config.weight_path)
             if not weight_path.is_file():
                 raise FileNotFoundError(f"显式指定的代理权重不存在：{weight_path}")
         else:
@@ -160,8 +210,30 @@ class OpenCLIPSurrogate:
                 f"没有找到 {config.name}/{config.pretrained} 的本地冻结权重；"
                 "当前配置禁止自动下载。请显式提供 weight_path 或允许下载。"
             )
+        _patch_open_clip_safetensors()
         pretrained = str(weight_path) if weight_path else config.pretrained
-        self.model = open_clip.create_model(config.name, pretrained=pretrained)
+        try:
+            self.model = open_clip.create_model(config.name, pretrained=pretrained)
+        except Exception as exc:
+            if _is_safetensors_file(weight_path):
+                try:
+                    from safetensors.torch import load_file
+                    self.model = open_clip.create_model(config.name, pretrained=None)
+                    state_dict = load_file(str(weight_path), device="cpu")
+                    if next(iter(state_dict.items()))[0].startswith("module."):
+                        state_dict = {k[7:]: v for k, v in state_dict.items()}
+                    self.model.load_state_dict(state_dict, strict=False)
+                except Exception:
+                    raise exc
+            elif "weights_only" in str(exc) or "UnpicklingError" in type(exc).__name__:
+                try:
+                    self.model = open_clip.create_model(
+                        config.name, pretrained=pretrained, weights_only=False
+                    )
+                except TypeError:
+                    raise exc
+            else:
+                raise
         self.model.eval().to(self.device, dtype=torch.float32)
         for parameter in self.model.parameters():
             parameter.requires_grad_(False)

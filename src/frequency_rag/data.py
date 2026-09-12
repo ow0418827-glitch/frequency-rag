@@ -54,19 +54,34 @@ def _resolve_image_candidate(
     if not p.is_absolute():
         if base_dir:
             candidates.append((base_dir / p).resolve())
+            if sample_id:
+                candidates.append((base_dir / sample_id / p).resolve())
+                if role:
+                    candidates.append((base_dir / sample_id / f"{role}_{p.name}").resolve())
         candidates.append((project_root / p).resolve())
+        if sample_id:
+            candidates.append((project_root / "data" / sample_id / p).resolve())
         candidates.append(p.resolve())
 
-    # Check data/ by sample_id and role (source.jpg or target.jpg)
+    # Check by sample_id and role (source.jpg, source_*.jpg, etc.)
     if sample_id and role:
         candidates.append((project_root / "data" / sample_id / f"{role}.jpg").resolve())
         candidates.append((project_root / "data" / sample_id / f"{role}.png").resolve())
         if base_dir:
             candidates.append((base_dir / sample_id / f"{role}.jpg").resolve())
             candidates.append((base_dir / sample_id / f"{role}.png").resolve())
+            candidates.append((base_dir / sample_id / f"{role}_{p.name}").resolve())
+            # Look inside base_dir / sample_id directory for role_*
+            s_dir = (base_dir / sample_id).resolve()
+            if s_dir.is_dir():
+                for f in sorted(s_dir.iterdir()):
+                    if f.is_file() and f.name.lower().startswith(f"{role}_"):
+                        candidates.append(f.resolve())
 
-    # Check data/ by filename
+    # Check data/ by filename and role prefixes
     candidates.append((project_root / "data" / p.name).resolve())
+    if role:
+        candidates.append((project_root / "data" / f"{role}_{p.name}").resolve())
 
     for candidate in candidates:
         if candidate.is_file():
@@ -99,23 +114,60 @@ class FrozenSample:
         raw: dict[str, Any],
         base_dir: Path | None = None,
     ) -> "FrozenSample":
-        sid = str(raw["sample_id"])
-        src = _resolve_image_candidate(raw["source_image"], base_dir=base_dir, sample_id=sid, role="source")
-        tgt = _resolve_image_candidate(raw["target_image"], base_dir=base_dir, sample_id=sid, role="target")
+        sid = str(raw.get("sample_id") or raw.get("pair_id") or "")
+        if not sid:
+            raise ValueError("样本缺少标识符 (sample_id 或 pair_id)。")
+
+        raw_src = raw.get("source_image") or ""
+        raw_tgt = raw.get("target_image") or ""
+        src = _resolve_image_candidate(raw_src, base_dir=base_dir, sample_id=sid, role="source")
+        tgt = _resolve_image_candidate(raw_tgt, base_dir=base_dir, sample_id=sid, role="target")
+
+        src_sha = str(raw.get("source_sha256") or "")
+        if not src_sha and src.is_file():
+            src_sha = sha256_file(src)
+
+        tgt_sha = str(raw.get("target_sha256") or "")
+        if not tgt_sha and tgt.is_file():
+            tgt_sha = sha256_file(tgt)
+
+        question = str(raw.get("question", ""))
+        answer = str(raw.get("answer") or raw.get("ground_truth_answer", ""))
+        target_text = str(raw.get("target_text", ""))
+
+        selection_score = float(raw.get("selection_score", 1.0))
+        phi_r = float(raw.get("phi_r", 0.0))
+        phi_contra = float(raw.get("phi_contra", 0.0))
+        phi_c = float(raw.get("phi_c", 0.0))
+
+        raw_dict = dict(raw)
+        raw_dict["sample_id"] = sid
+        raw_dict["source_image"] = str(src)
+        raw_dict["source_sha256"] = src_sha
+        raw_dict["target_image"] = str(tgt)
+        raw_dict["target_sha256"] = tgt_sha
+        raw_dict["question"] = question
+        raw_dict["answer"] = answer
+        raw_dict["target_text"] = target_text
+        raw_dict["selection_score"] = selection_score
+        raw_dict["phi_r"] = phi_r
+        raw_dict["phi_contra"] = phi_contra
+        raw_dict["phi_c"] = phi_c
+
         return cls(
             sample_id=sid,
-            question=str(raw["question"]),
-            answer=str(raw.get("answer", "")),
+            question=question,
+            answer=answer,
             source_image=src,
-            source_sha256=str(raw["source_sha256"]),
+            source_sha256=src_sha,
             target_image=tgt,
-            target_sha256=str(raw["target_sha256"]),
-            target_text=str(raw.get("target_text", "")),
-            selection_score=float(raw["selection_score"]),
-            phi_r=float(raw["phi_r"]),
-            phi_contra=float(raw["phi_contra"]),
-            phi_c=float(raw["phi_c"]),
-            raw=dict(raw),
+            target_sha256=tgt_sha,
+            target_text=target_text,
+            selection_score=selection_score,
+            phi_r=phi_r,
+            phi_contra=phi_contra,
+            phi_c=phi_c,
+            raw=raw_dict,
         )
 
 
@@ -251,6 +303,31 @@ def load_samples_from_data_dir(
     if not dir_path.is_dir():
         raise FileNotFoundError(f"数据目录不存在：{dir_path}")
 
+    # 支持直接加载 pairs_summary.json
+    pairs_summary_file = dir_path / "pairs_summary.json"
+    if pairs_summary_file.is_file():
+        summary_raw = load_json(pairs_summary_file)
+        if isinstance(summary_raw, list):
+            requested = set(sample_ids) if sample_ids is not None else None
+            filtered_raw = [
+                item for item in summary_raw
+                if requested is None or str(item.get("sample_id") or item.get("pair_id")) in requested
+            ]
+            samples = [FrozenSample.from_mapping(item, base_dir=dir_path) for item in filtered_raw]
+            if max_samples is not None and max_samples > 0:
+                samples = samples[:max_samples]
+            if not samples:
+                raise ValueError("pairs_summary.json 中没有发现有效的样本。")
+            if verify_hashes:
+                verify_frozen_samples(samples)
+            manifest_data = {
+                "status": "frozen_for_execution",
+                "data_dir": str(dir_path),
+                "num_samples": len(samples),
+                "samples": [s.raw for s in samples],
+            }
+            return manifest_data, samples
+
     subdirs = sorted([d for d in dir_path.iterdir() if d.is_dir() and not d.name.startswith(".")])
     requested = set(sample_ids) if sample_ids is not None else None
 
@@ -262,11 +339,15 @@ def load_samples_from_data_dir(
         meta_file = s_dir / "metadata.json"
         if meta_file.is_file():
             meta = load_json(meta_file)
+            if "sample_id" not in meta and "pair_id" in meta:
+                meta["sample_id"] = meta["pair_id"]
         else:
-            src_img = s_dir / "source.jpg"
-            tgt_img = s_dir / "target.jpg"
-            if not src_img.is_file() or not tgt_img.is_file():
+            src_files = [f for f in s_dir.iterdir() if f.is_file() and (f.name.lower() == "source.jpg" or f.name.lower().startswith("source_"))]
+            tgt_files = [f for f in s_dir.iterdir() if f.is_file() and (f.name.lower() == "target.jpg" or f.name.lower().startswith("target_"))]
+            if not src_files or not tgt_files:
                 continue
+            src_img = src_files[0]
+            tgt_img = tgt_files[0]
             meta = {
                 "sample_id": sid,
                 "question": "",
@@ -284,17 +365,10 @@ def load_samples_from_data_dir(
         raw_samples.append(meta)
 
     if requested is not None:
-        found = {item["sample_id"] for item in raw_samples}
+        found = {item.get("sample_id") or item.get("pair_id") for item in raw_samples}
         missing = requested - found
         if missing:
             raise KeyError(f"数据目录中没有这些样本：{', '.join(sorted(missing))}")
-
-    manifest_data = {
-        "status": "frozen_for_execution",
-        "data_dir": str(dir_path),
-        "num_samples": len(raw_samples),
-        "samples": raw_samples,
-    }
 
     samples = [FrozenSample.from_mapping(item, base_dir=dir_path) for item in raw_samples]
     if max_samples is not None and max_samples > 0:
@@ -303,6 +377,13 @@ def load_samples_from_data_dir(
         raise ValueError("数据目录中没有发现有效的样本。")
     if verify_hashes:
         verify_frozen_samples(samples)
+
+    manifest_data = {
+        "status": "frozen_for_execution",
+        "data_dir": str(dir_path),
+        "num_samples": len(samples),
+        "samples": [s.raw for s in samples],
+    }
     return manifest_data, samples
 
 
@@ -326,6 +407,14 @@ def load_frozen_manifest(
             )
 
     raw = load_json(target_path)
+    if isinstance(raw, list):
+        raw = {
+            "status": "frozen_for_execution",
+            "source_manifest": str(target_path),
+            "num_samples": len(raw),
+            "samples": raw,
+        }
+
     if raw.get("status") not in {
         "frozen_from_saved_results_not_reselected_or_rerun",
         "frozen_for_execution",
@@ -336,7 +425,7 @@ def load_frozen_manifest(
     samples = [
         FrozenSample.from_mapping(item, base_dir=base_dir)
         for item in raw.get("samples", [])
-        if requested is None or str(item.get("sample_id")) in requested
+        if requested is None or str(item.get("sample_id") or item.get("pair_id")) in requested
     ]
     sample_identifiers = [sample.sample_id for sample in samples]
     if len(set(sample_identifiers)) != len(sample_identifiers):

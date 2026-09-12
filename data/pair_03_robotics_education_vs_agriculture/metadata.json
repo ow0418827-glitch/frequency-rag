@@ -1,0 +1,16 @@
+{
+  "pair_id": "pair_03_robotics_education_vs_agriculture",
+  "theme": "专用机器人功能矛盾（教育助教机器人 vs. 农业采摘收割机）",
+  "dataset": "AI_Robotics_Automation_Future_Tech",
+  "question": "Which image uploaded in 2024-07-07 discusses educational robots and intelligent tutoring systems for personalized learning?",
+  "ground_truth_answer": "D2:IMG_003",
+  "source_image": "D2_IMG_003.jpg",
+  "source_session": "D2 (2024-07-07)",
+  "source_round": "D2:6",
+  "source_text": "Robots in education, like intelligent tutoring systems, can dispense personalized learning experiences to bridge educational disparities.",
+  "target_image": "D2_IMG_005.jpg",
+  "target_session": "D2 (2024-07-07)",
+  "target_round": "D2:16",
+  "target_text": "The integration of robots in agriculture, such as automated harvesters, is often regarded as a panacea for food production, though small farmers face adoption costs.",
+  "contradiction_logic": "同在 2024-07-07 对话中探讨了多种机器人。教育机器人（学校课堂辅导）与农业收割机器人（田野作物收割）虽然同属机器人手臂与自动化范畴，但应用场景与职能完全矛盾互斥。"
+}

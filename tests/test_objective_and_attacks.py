@@ -160,11 +160,19 @@ def test_attack_methods_save_budget_compliant_png_and_true_final_metrics(
 
 def test_frequency_attack_uses_compact_parameter_count(tmp_path, cpu_config, tiny_surrogates) -> None:
     source, target = _pil_images()
+    projection_config = replace(
+        cpu_config,
+        attack=replace(
+            cpu_config.attack,
+            epsilon=0.01,
+            spatial_step_size=0.1,
+        ),
+    )
     result = run_attack(
         source,
         target,
         "target",
-        cpu_config,
+        projection_config,
         method="frequency",
         steps=1,
         axis_ratio=0.25,
@@ -176,6 +184,14 @@ def test_frequency_attack_uses_compact_parameter_count(tmp_path, cpu_config, tin
     assert frequency["spatial_parameter_count"] == 3 * 5 * 7
     assert frequency["coefficient_count"] < frequency["spatial_parameter_count"]
     assert frequency["radial_scale_summary"]["count"] == 1
+    assert frequency["projection"] == (
+        "spatial_clip_low_frequency_reproject_with_radial_fallback"
+    )
+    assert frequency["maximum_reprojection_iterations"] == 1
+    assert frequency["reprojection_summary"]["count"] == 1
+    assert frequency["reprojection_summary"]["steps_with_spatial_clip"] == 1
+    assert result.metadata["history"][0]["projection_iterations"] == 1
+    assert result.metadata["decoded_image_audit"]["within_budget"]
 
 
 def test_progressive_frequency_embeds_old_coefficients(tmp_path, cpu_config, tiny_surrogates) -> None:

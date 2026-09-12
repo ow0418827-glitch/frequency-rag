@@ -99,6 +99,11 @@ def _pixel_update(
         "radial_scale": None,
         "direction_linf": 1.0 if not zero_gradient else 0.0,
         "proposed_linf": float(proposed.abs().amax().detach().cpu()),
+        "projection_iterations": None,
+        "initial_clipped_fraction": None,
+        "post_reprojection_linf": None,
+        "converged_before_fallback": None,
+        "direct_radial_scale": None,
     }
 
 
@@ -287,6 +292,10 @@ def run_attack(
     checkpoints: list[dict[str, Any]] = []
     captured_fractions: set[float] = set()
     radial_scales: list[float] = []
+    direct_radial_scales: list[float] = []
+    reprojection_iterations: list[int] = []
+    initial_clipped_fractions: list[float] = []
+    converged_before_fallback: list[bool] = []
     zero_gradient_steps = 0
     discarded_steps = 0
     completed_steps = 0
@@ -426,12 +435,21 @@ def run_attack(
                     spatial_step_size=attack_config.spatial_step_size,
                     epsilon=attack_config.epsilon,
                     keep_constant_component=project_config.frequency.constant_component,
+                    maximum_reprojection_iterations=(
+                        project_config.frequency.maximum_reprojection_iterations
+                    ),
+                    reprojection_tolerance=project_config.frequency.reprojection_tolerance,
                 )
                 proposed_parameter = update.coefficients
                 update_record = {
                     "zero_gradient": update.zero_gradient,
                     "direction_linf": update.direction_linf,
                     "proposed_linf": update.proposed_linf,
+                    "projection_iterations": update.projection_iterations,
+                    "initial_clipped_fraction": update.initial_clipped_fraction,
+                    "post_reprojection_linf": update.post_reprojection_linf,
+                    "converged_before_fallback": update.converged_before_fallback,
+                    "direct_radial_scale": update.direct_radial_scale,
                     "radial_scale": update.radial_scale,
                     "resulting_linf": update.resulting_linf,
                 }
@@ -463,6 +481,15 @@ def run_attack(
                 zero_gradient_steps += 1
             if update_record["radial_scale"] is not None:
                 radial_scales.append(float(update_record["radial_scale"]))
+                direct_radial_scales.append(float(update_record["direct_radial_scale"]))
+            if update_record["projection_iterations"] is not None:
+                reprojection_iterations.append(int(update_record["projection_iterations"]))
+                initial_clipped_fractions.append(
+                    float(update_record["initial_clipped_fraction"])
+                )
+                converged_before_fallback.append(
+                    bool(update_record["converged_before_fallback"])
+                )
 
             step_record = {
                 "step": completed_steps,
@@ -474,6 +501,11 @@ def run_attack(
                 "zero_gradient": update_record["zero_gradient"],
                 "direction_linf": update_record["direction_linf"],
                 "proposed_linf": update_record["proposed_linf"],
+                "projection_iterations": update_record["projection_iterations"],
+                "initial_clipped_fraction": update_record["initial_clipped_fraction"],
+                "post_reprojection_linf": update_record["post_reprojection_linf"],
+                "converged_before_fallback": update_record["converged_before_fallback"],
+                "direct_radial_scale": update_record["direct_radial_scale"],
                 "radial_scale": update_record["radial_scale"],
                 "axis_ratio": selected_axis_ratio if frequency_method else None,
                 "frequency_shape": (
@@ -627,6 +659,51 @@ def run_attack(
             if radial_scales
             else None
         ),
+        "counterfactual_direct_scale_mean": (
+            statistics.fmean(direct_radial_scales) if direct_radial_scales else None
+        ),
+        "mean_fallback_minus_counterfactual_direct_scale": (
+            statistics.fmean(
+                actual - direct
+                for actual, direct in zip(radial_scales, direct_radial_scales, strict=True)
+            )
+            if radial_scales
+            else None
+        ),
+    }
+    clipped_step_count = sum(value > 0 for value in reprojection_iterations)
+    clipped_step_convergence = [
+        converged
+        for iterations, converged in zip(
+            reprojection_iterations, converged_before_fallback, strict=True
+        )
+        if iterations > 0
+    ]
+    reprojection_summary = {
+        "count": len(reprojection_iterations),
+        "steps_with_spatial_clip": clipped_step_count,
+        "fraction_of_steps_with_spatial_clip": (
+            clipped_step_count / len(reprojection_iterations)
+            if reprojection_iterations
+            else None
+        ),
+        "mean_iterations": (
+            statistics.fmean(reprojection_iterations) if reprojection_iterations else None
+        ),
+        "maximum_iterations": max(reprojection_iterations) if reprojection_iterations else None,
+        "mean_initial_clipped_element_fraction": (
+            statistics.fmean(initial_clipped_fractions)
+            if initial_clipped_fractions
+            else None
+        ),
+        "maximum_initial_clipped_element_fraction": (
+            max(initial_clipped_fractions) if initial_clipped_fractions else None
+        ),
+        "fraction_clipped_steps_converged_before_fallback": (
+            sum(clipped_step_convergence) / len(clipped_step_convergence)
+            if clipped_step_convergence
+            else None
+        ),
     }
     metadata: dict[str, Any] = {
         "schema_version": 1,
@@ -673,9 +750,24 @@ def run_attack(
             "constant_component_kept": (
                 project_config.frequency.constant_component if frequency_method else None
             ),
-            "projection": "radial_scale_synthesized_linf" if frequency_method else None,
+            "projection": (
+                project_config.frequency.coefficient_feasibility
+                if frequency_method
+                else None
+            ),
+            "maximum_reprojection_iterations": (
+                project_config.frequency.maximum_reprojection_iterations
+                if frequency_method
+                else None
+            ),
+            "reprojection_tolerance": (
+                project_config.frequency.reprojection_tolerance
+                if frequency_method
+                else None
+            ),
             "progressive_schedule_basis": progressive_basis,
             "transitions": frequency_transitions,
+            "reprojection_summary": reprojection_summary,
             "radial_scale_summary": radial_summary,
             "saved_image_claimed_strictly_bandlimited": False,
         },

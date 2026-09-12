@@ -13,6 +13,7 @@ from frequency_rag.frequency import (
     expand_coefficients,
     orthonormal_dct_basis,
     out_of_band_energy_ratio,
+    project_and_reproject,
     synthesize,
     update_coefficients,
 )
@@ -91,6 +92,9 @@ def test_frequency_update_calibrates_spatial_step_and_budget() -> None:
     )
     assert first.zero_gradient is False
     assert first.resulting_linf == pytest.approx(0.5 / 255, rel=1e-5, abs=1e-7)
+    assert first.projection_iterations == 0
+    assert first.initial_clipped_fraction == 0.0
+    assert first.radial_scale == 1.0
     current = first.coefficients
     for _ in range(100):
         current = update_coefficients(
@@ -102,6 +106,54 @@ def test_frequency_update_calibrates_spatial_step_and_budget() -> None:
             epsilon=16 / 255,
         ).coefficients
     assert synthesize(current, height_basis, width_basis).abs().max().item() <= 16 / 255 + 1e-6
+
+
+def test_clip_reproject_rechecks_overshoot_and_uses_radial_fallback() -> None:
+    height_basis = orthonormal_dct_basis(3, 2, dtype=torch.float64)
+    width_basis = orthonormal_dct_basis(1, 1, dtype=torch.float64)
+    spatial = torch.tensor([17.0, 9.0, 1.0], dtype=torch.float64).reshape(1, 1, 3, 1)
+    coefficients = analyse(spatial, height_basis, width_basis)
+
+    result = project_and_reproject(
+        coefficients,
+        height_basis,
+        width_basis,
+        epsilon=16.0,
+        maximum_iterations=1,
+        convergence_tolerance=1e-12,
+    )
+    projected_spatial = synthesize(result.coefficients, height_basis, width_basis)
+    direct_scaled = spatial * result.direct_radial_scale
+
+    assert result.initial_clipped_fraction == pytest.approx(1 / 3)
+    assert result.projection_iterations == 1
+    assert result.post_reprojection_linf > 16.0
+    assert result.converged_before_fallback is False
+    assert result.radial_scale < 1.0
+    assert result.radial_scale > result.direct_radial_scale
+    assert result.resulting_linf <= 16.0
+    assert projected_spatial.abs().mean() > direct_scaled.abs().mean()
+    assert out_of_band_energy_ratio(
+        projected_spatial, height_basis, width_basis
+    ) <= 1e-12
+
+
+def test_clip_reproject_keeps_constant_component_disabled() -> None:
+    height_basis = orthonormal_dct_basis(5, 3, dtype=torch.float64)
+    width_basis = orthonormal_dct_basis(5, 3, dtype=torch.float64)
+    coefficients = torch.ones(1, 3, 3, 3, dtype=torch.float64) * 10
+
+    result = project_and_reproject(
+        coefficients,
+        height_basis,
+        width_basis,
+        epsilon=0.2,
+        maximum_iterations=2,
+        keep_constant_component=False,
+    )
+
+    assert torch.count_nonzero(result.coefficients[..., 0, 0]) == 0
+    assert result.resulting_linf <= 0.2
 
 
 def test_zero_gradient_is_explicit_and_finite() -> None:
@@ -180,4 +232,3 @@ def test_basis_cache_keys_include_shape_dtype_and_records_hits() -> None:
     assert stats["hits"] == 1
     assert stats["misses"] == 2
     assert stats["entries"] == 2
-

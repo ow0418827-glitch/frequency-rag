@@ -67,10 +67,21 @@ def _write_run(
         },
         "frequency": {
             "enabled": method == "frequency",
+            "projection": (
+                "spatial_clip_low_frequency_reproject_with_radial_fallback"
+                if method == "frequency"
+                else None
+            ),
             "axis_ratio_final": 0.25 if method == "frequency" else None,
             "height_frequencies_final": 2 if method == "frequency" else None,
             "width_frequencies_final": 2 if method == "frequency" else None,
             "optimized_parameter_count": 12 if method == "frequency" else 105,
+            "reprojection_summary": {
+                "mean_iterations": 1.0 if method == "frequency" else None,
+                "fraction_of_steps_with_spatial_clip": (
+                    0.25 if method == "frequency" else None
+                ),
+            },
             "radial_scale_summary": {"mean": 1.0 if method == "frequency" else None},
         },
         "timing": {
@@ -247,6 +258,14 @@ def test_summary_applies_predeclared_paired_thresholds(tmp_path, cpu_config) -> 
     assert (output / "results.csv").is_file()
     assert (output / "run_costs.csv").is_file()
     assert len(report["run_costs"]) == 2
+    frequency_result = next(
+        row for row in report["rows"] if row["method"] == "frequency"
+    )
+    assert frequency_result["frequency_projection"] == (
+        "spatial_clip_low_frequency_reproject_with_radial_fallback"
+    )
+    assert frequency_result["reprojection_iterations_mean"] == 1.0
+    assert frequency_result["fallback_radial_scale_mean"] == 1.0
     assert load_json(output / "summary.json")["row_count"] == 2
 
 

@@ -134,8 +134,111 @@ class FrequencyUpdate:
     zero_gradient: bool
     direction_linf: float
     proposed_linf: float
+    projection_iterations: int
+    initial_clipped_fraction: float
+    post_reprojection_linf: float
+    converged_before_fallback: bool
+    direct_radial_scale: float
     radial_scale: float
     resulting_linf: float
+
+
+@dataclass(frozen=True)
+class FeasibilityProjection:
+    coefficients: torch.Tensor
+    initial_linf: float
+    projection_iterations: int
+    initial_clipped_fraction: float
+    post_reprojection_linf: float
+    converged_before_fallback: bool
+    direct_radial_scale: float
+    radial_scale: float
+    resulting_linf: float
+
+
+def project_and_reproject(
+    coefficients: torch.Tensor,
+    height_basis: torch.Tensor,
+    width_basis: torch.Tensor,
+    *,
+    epsilon: float,
+    maximum_iterations: int = 1,
+    convergence_tolerance: float = 1e-7,
+    keep_constant_component: bool = True,
+) -> FeasibilityProjection:
+    """在空间预算盒与低频子空间之间交替投影，并以整体缩放严格兜底。"""
+    if not math.isfinite(epsilon) or epsilon <= 0:
+        raise ValueError("扰动预算必须为有限正数。")
+    if (
+        isinstance(maximum_iterations, bool)
+        or not isinstance(maximum_iterations, int)
+        or not 1 <= maximum_iterations <= 16
+    ):
+        raise ValueError("空间截断与低频重投影的最大轮数必须位于 [1, 16]。")
+    if not math.isfinite(convergence_tolerance) or convergence_tolerance < 0:
+        raise ValueError("重投影收敛容差必须为有限非负数。")
+    if not torch.isfinite(coefficients).all():
+        raise FloatingPointError("待投影频率系数包含非有限值。")
+
+    projected = coefficients.detach().clone()
+    if not keep_constant_component:
+        projected[..., 0, 0] = 0
+    spatial = synthesize(projected, height_basis, width_basis)
+    initial_linf = float(spatial.abs().amax().detach().cpu())
+    initial_clipped_fraction = float(
+        (spatial.abs() > float(epsilon)).to(dtype=torch.float32).mean().detach().cpu()
+    )
+    direct_radial_scale = min(
+        1.0,
+        float(epsilon) / max(initial_linf, torch.finfo(spatial.dtype).tiny),
+    )
+    projection_iterations = 0
+
+    # 超限后固定执行有限轮，避免每一轮读取设备标量造成同步开销。达到可行域后，
+    # 截断与同一子空间正交投影均为幂等操作，后续轮不会有意改变结果。
+    if initial_linf > float(epsilon) + convergence_tolerance:
+        for _ in range(maximum_iterations):
+            spatial_clamped = spatial.clamp(min=-float(epsilon), max=float(epsilon))
+            projected = analyse(spatial_clamped, height_basis, width_basis)
+            if not keep_constant_component:
+                projected[..., 0, 0] = 0
+            spatial = synthesize(projected, height_basis, width_basis)
+            projection_iterations += 1
+
+    post_reprojection_linf = float(spatial.abs().amax().detach().cpu())
+    converged_before_fallback = post_reprojection_linf <= float(epsilon) + convergence_tolerance
+    radial_scale = min(
+        1.0,
+        float(epsilon) / max(post_reprojection_linf, torch.finfo(spatial.dtype).tiny),
+    )
+    if radial_scale < 1.0:
+        projected = projected * radial_scale
+        spatial = synthesize(projected, height_basis, width_basis)
+    resulting_linf = float(spatial.abs().amax().detach().cpu())
+
+    # 浮点乘法和再次合成可能产生极小的向上舍入；留出机器精度裕量校正，
+    # 使返回的浮点扰动本身也不高于名义预算，而不只是在容差内通过。
+    safety_factor = max(0.0, 1.0 - 4.0 * torch.finfo(spatial.dtype).eps)
+    for _ in range(2):
+        if resulting_linf <= float(epsilon):
+            break
+        correction = float(epsilon) * safety_factor / resulting_linf
+        projected = projected * correction
+        radial_scale *= correction
+        spatial = synthesize(projected, height_basis, width_basis)
+        resulting_linf = float(spatial.abs().amax().detach().cpu())
+
+    return FeasibilityProjection(
+        coefficients=projected.detach(),
+        initial_linf=initial_linf,
+        projection_iterations=projection_iterations,
+        initial_clipped_fraction=initial_clipped_fraction,
+        post_reprojection_linf=post_reprojection_linf,
+        converged_before_fallback=converged_before_fallback,
+        direct_radial_scale=direct_radial_scale,
+        radial_scale=radial_scale,
+        resulting_linf=resulting_linf,
+    )
 
 
 def update_coefficients(
@@ -147,9 +250,11 @@ def update_coefficients(
     spatial_step_size: float,
     epsilon: float,
     keep_constant_component: bool = True,
+    maximum_reprojection_iterations: int = 1,
+    reprojection_tolerance: float = 1e-7,
     zero_threshold: float = 1e-12,
 ) -> FrequencyUpdate:
-    """按系数梯度符号更新，并用空间无穷范数校准和整体缩放。"""
+    """按系数梯度符号更新，再经空间截断、低频重投影与缩放兜底。"""
     if coefficients.shape != gradient.shape:
         raise ValueError("系数与梯度形状不一致。")
     if not torch.isfinite(gradient).all():
@@ -169,6 +274,11 @@ def update_coefficients(
                 zero_gradient=True,
                 direction_linf=direction_linf,
                 proposed_linf=current_linf,
+                projection_iterations=0,
+                initial_clipped_fraction=0.0,
+                post_reprojection_linf=current_linf,
+                converged_before_fallback=current_linf <= float(epsilon) + reprojection_tolerance,
+                direct_radial_scale=1.0,
                 radial_scale=1.0,
                 resulting_linf=current_linf,
             )
@@ -176,19 +286,28 @@ def update_coefficients(
         proposed = coefficients + calibrated_step * direction
         if not keep_constant_component:
             proposed[..., 0, 0] = 0
-        proposed_spatial = synthesize(proposed, height_basis, width_basis)
-        proposed_linf = float(proposed_spatial.abs().amax().detach().cpu())
-        radial_scale = min(1.0, float(epsilon) / max(proposed_linf, zero_threshold))
-        updated = (proposed * radial_scale).detach()
-        resulting = synthesize(updated, height_basis, width_basis)
-        resulting_linf = float(resulting.abs().amax().detach().cpu())
+        projection = project_and_reproject(
+            proposed,
+            height_basis,
+            width_basis,
+            epsilon=epsilon,
+            maximum_iterations=maximum_reprojection_iterations,
+            convergence_tolerance=reprojection_tolerance,
+            keep_constant_component=keep_constant_component,
+        )
+        proposed_linf = projection.initial_linf
     return FrequencyUpdate(
-        coefficients=updated,
+        coefficients=projection.coefficients,
         zero_gradient=False,
         direction_linf=direction_linf,
         proposed_linf=proposed_linf,
-        radial_scale=radial_scale,
-        resulting_linf=resulting_linf,
+        projection_iterations=projection.projection_iterations,
+        initial_clipped_fraction=projection.initial_clipped_fraction,
+        post_reprojection_linf=projection.post_reprojection_linf,
+        converged_before_fallback=projection.converged_before_fallback,
+        direct_radial_scale=projection.direct_radial_scale,
+        radial_scale=projection.radial_scale,
+        resulting_linf=projection.resulting_linf,
     )
 
 
