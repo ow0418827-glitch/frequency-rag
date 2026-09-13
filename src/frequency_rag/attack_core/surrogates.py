@@ -10,8 +10,8 @@ from typing import Any, Iterable
 import torch
 import torch.nn.functional as F
 
-from .config import SurrogateConfig
-from .io import sha256_file, stable_key
+from frequency_rag.common.config import SurrogateConfig
+from frequency_rag.common.io import sha256_file, stable_key
 
 
 CLIP_MEAN = (0.48145466, 0.4578275, 0.40821073)

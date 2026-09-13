@@ -7,9 +7,9 @@ from typing import Any, Callable, Sequence
 import torch
 import torch.nn.functional as F
 
-from .config import AttackConfig
-from .models import ImageFeatures
-from .ot import local_ot_similarity, token_kmeans
+from frequency_rag.common.config import AttackConfig
+from frequency_rag.attack_core.surrogates import ImageFeatures
+from frequency_rag.attack_core.ot import local_ot_similarity, token_kmeans
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import gc
+from frequency_rag.common.provenance import utc_timestamp, implementation_snapshot
 from pathlib import Path
 import time
 import traceback
@@ -10,49 +10,21 @@ from typing import Any, Iterable, Mapping
 import numpy as np
 import torch
 
-from .attacks import AttackMethod, run_attack
-from .config import ProjectConfig
-from .data import (
+from frequency_rag.attack_core.engine import AttackMethod, run_attack
+from frequency_rag.common.config import ProjectConfig
+from frequency_rag.image_selection.data import (
     FrozenSample,
     load_candidates_from_memgallery,
     load_frozen_manifest,
     load_queries_from_memgallery,
 )
-from .evaluation import MultimodalVectorEvaluator, compute_vector_metrics
-from .frequency import DCTBasisCache
-from .io import load_json, save_json, save_vector, sha256_file, stable_key
-from .models import OpenCLIPSurrogate, load_surrogates, resolve_device
-from .objective import TargetCache
-from .profiling import DeviceMemoryMonitor, PhaseClock
-from .selection import select_target_for_query
-
-
-def utc_timestamp() -> str:
-    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-
-
-def implementation_snapshot() -> dict[str, Any]:
-    """记录实际执行代码内容，供无独立版本库的运行之间核对。"""
-    project_root = Path(__file__).resolve().parents[2]
-    candidates = [project_root / "pyproject.toml", project_root / "tools" / "run_cli.py"]
-    candidates.extend(sorted((project_root / "src" / "frequency_rag").glob("*.py")))
-    files = [
-        {
-            "path": path.relative_to(project_root).as_posix(),
-            "sha256": sha256_file(path),
-            "bytes": path.stat().st_size,
-        }
-        for path in candidates
-        if path.is_file()
-    ]
-    return {
-        "created_at": utc_timestamp(),
-        "project_root": str(project_root),
-        "files": files,
-        "content_identity": stable_key(
-            f"{record['path']}:{record['sha256']}" for record in files
-        ),
-    }
+from frequency_rag.evaluation.vectors import MultimodalVectorEvaluator, compute_vector_metrics
+from frequency_rag.frequency_attack.dct import DCTBasisCache
+from frequency_rag.common.io import load_json, save_json, save_vector, sha256_file, stable_key
+from frequency_rag.attack_core.surrogates import OpenCLIPSurrogate, load_surrogates, resolve_device
+from frequency_rag.attack_core.objective import TargetCache
+from frequency_rag.common.profiling import DeviceMemoryMonitor, PhaseClock
+from frequency_rag.image_selection.scoring import select_target_for_query
 
 
 def _ensure_empty_output_directory(path: str | Path) -> Path:
@@ -650,7 +622,7 @@ def recompute_reference_selection(
     )
     image_vectors: list[np.ndarray] = []
     caption_vectors: list[np.ndarray] = []
-    from .io import load_image, pil_to_tensor
+    from frequency_rag.common.io import load_image, pil_to_tensor
 
     with torch.no_grad():
         for candidate in candidates:

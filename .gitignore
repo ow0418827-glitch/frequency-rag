@@ -19,6 +19,9 @@ outputs/
 venv/
 ENV/
 env/
+.env
+.env.*
+configs/*.local.json
 
 # IDE / Editor
 .vscode/

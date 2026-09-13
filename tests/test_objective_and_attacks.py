@@ -8,9 +8,9 @@ from PIL import Image
 import pytest
 import torch
 
-from frequency_rag.attacks import AttackMethod, run_attack
-from frequency_rag.frequency import DCTBasisCache
-from frequency_rag.objective import (
+from frequency_rag.attack_core.engine import AttackMethod, run_attack
+from frequency_rag.frequency_attack.dct import DCTBasisCache
+from frequency_rag.attack_core.objective import (
     TargetCache,
     joint_objective,
     prepare_targets,

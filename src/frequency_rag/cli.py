@@ -11,13 +11,13 @@ from typing import Any
 
 import torch
 
-from .attacks import AttackMethod
-from .benchmark import generation_conditions_signature, write_summary
-from .config import ProjectConfig, load_config
-from .data import load_frozen_manifest
-from .io import load_json, save_json, sha256_file
-from .models import load_surrogates, resolve_hf_cached_weight
-from .pipeline import (
+from frequency_rag.attack_core.engine import AttackMethod
+from frequency_rag.evaluation.results import generation_conditions_signature, write_summary
+from frequency_rag.common.config import ProjectConfig, load_config
+from frequency_rag.image_selection.data import load_frozen_manifest
+from frequency_rag.common.io import load_json, save_json, sha256_file
+from frequency_rag.attack_core.surrogates import load_surrogates, resolve_hf_cached_weight
+from frequency_rag.experiments.attack_pipeline import (
     evaluate_generated_run,
     generate_frozen_run,
     recompute_reference_selection,
@@ -140,6 +140,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="允许在线自动下载缺失的预训练模型权重",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    from frequency_rag.experiments.memory_cli import add_memory_commands
+    add_memory_commands(subparsers)
 
     doctor = subparsers.add_parser("doctor", help="核对环境、数据和本地权重")
     doctor.add_argument("--load-models", action="store_true", help="实际加载三个代理并检查局部特征接口")
@@ -276,6 +278,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
+        if args.command.startswith("memory-"):
+            from frequency_rag.experiments.memory_cli import dispatch_memory
+            return dispatch_memory(args)
         config = load_config(args.config)
         if getattr(args, "allow_downloads", False):
             from dataclasses import replace

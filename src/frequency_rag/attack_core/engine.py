@@ -12,8 +12,9 @@ from typing import Any, Sequence
 from PIL import Image
 import torch
 
-from .config import ProjectConfig
-from .frequency import (
+from frequency_rag.pixel_attack.update import pixel_update as _pixel_update
+from frequency_rag.common.config import ProjectConfig
+from frequency_rag.frequency_attack.dct import (
     DCTBasisCache,
     ProgressiveSchedule,
     axis_frequency_count,
@@ -22,7 +23,7 @@ from .frequency import (
     synthesize,
     update_coefficients,
 )
-from .io import (
+from frequency_rag.common.io import (
     decoded_image_audit,
     load_image,
     pil_to_tensor,
@@ -31,15 +32,15 @@ from .io import (
     sha256_file,
     tensor_to_pil,
 )
-from .models import load_surrogates, resolve_device
-from .objective import (
+from frequency_rag.attack_core.surrogates import load_surrogates, resolve_device
+from frequency_rag.attack_core.objective import (
     TargetCache,
     evaluate_objective,
     joint_objective,
     prepare_targets,
     sequential_image_gradient,
 )
-from .profiling import DeviceMemoryMonitor, PhaseClock, synchronize
+from frequency_rag.common.profiling import DeviceMemoryMonitor, PhaseClock, synchronize
 
 
 class AttackMethod(str, Enum):
@@ -75,36 +76,6 @@ def _cache_stats_copy(cache: TargetCache) -> dict[str, Any]:
 
 def _weights_list(weights: torch.Tensor) -> list[float]:
     return [float(value) for value in weights.detach().cpu().tolist()]
-
-
-def _pixel_update(
-    delta: torch.Tensor,
-    gradient: torch.Tensor,
-    source: torch.Tensor,
-    *,
-    step_size: float,
-    epsilon: float,
-) -> tuple[torch.Tensor, dict[str, Any]]:
-    if not torch.isfinite(gradient).all():
-        raise FloatingPointError("像素扰动梯度包含非有限值。")
-    with torch.no_grad():
-        zero_gradient = not bool(torch.count_nonzero(gradient).detach().cpu())
-        proposed = delta + float(step_size) * gradient.sign()
-        proposed = proposed.clamp(-float(epsilon), float(epsilon))
-        updated = ((source + proposed).clamp(0, 1) - source).detach()
-        linf = float(updated.abs().amax().detach().cpu())
-    return updated, {
-        "zero_gradient": zero_gradient,
-        "resulting_linf": linf,
-        "radial_scale": None,
-        "direction_linf": 1.0 if not zero_gradient else 0.0,
-        "proposed_linf": float(proposed.abs().amax().detach().cpu()),
-        "projection_iterations": None,
-        "initial_clipped_fraction": None,
-        "post_reprojection_linf": None,
-        "converged_before_fallback": None,
-        "direct_radial_scale": None,
-    }
 
 
 def _current_frequency_state(

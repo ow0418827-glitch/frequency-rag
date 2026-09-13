@@ -115,4 +115,3 @@ def local_ot_similarity(
         sinkhorn_tolerance=sinkhorn_tolerance,
         detach_transport_plan=detach_transport_plan,
     )
-

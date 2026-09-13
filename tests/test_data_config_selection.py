@@ -6,17 +6,17 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from frequency_rag.config import load_config
-from frequency_rag import data as data_module
-from frequency_rag.data import (
+from frequency_rag.common.config import load_config
+from frequency_rag.image_selection import data as data_module
+from frequency_rag.image_selection.data import (
     FrozenSample,
     MemGalleryCandidate,
     MemGalleryQuery,
     load_frozen_manifest,
     verify_frozen_samples,
 )
-from frequency_rag.io import load_json, save_json, sha256_file
-from frequency_rag.selection import lexical_gate, select_target_for_query
+from frequency_rag.common.io import load_json, save_json, sha256_file
+from frequency_rag.image_selection.scoring import lexical_gate, select_target_for_query
 
 
 def test_executable_config_loads_and_design_config_is_rejected() -> None:

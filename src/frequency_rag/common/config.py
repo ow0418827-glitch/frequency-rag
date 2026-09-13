@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import json
 import math
+from frequency_rag.common.paths import PROJECT_ROOT
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -516,7 +517,7 @@ def resolve_config_path(path: str | Path) -> Path:
     candidate = Path(path)
     if candidate.is_file():
         return candidate.resolve()
-    project_root = Path(__file__).resolve().parents[2]
+    project_root = PROJECT_ROOT
     project_candidate = project_root / candidate
     if project_candidate.is_file():
         return project_candidate.resolve()

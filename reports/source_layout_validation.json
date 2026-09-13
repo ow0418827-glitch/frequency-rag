@@ -1,0 +1,301 @@
+{
+  "date": "2026-09-13",
+  "scope": "functional_source_reorganization",
+  "tests_passed": 92,
+  "checks": {
+    "frozen_pairs": 5,
+    "compileall": true,
+    "cli": true,
+    "git_diff_check": true
+  },
+  "original_dataset_reloaded": {
+    "sessions": 68,
+    "turns": 1071,
+    "images": 217,
+    "questions": 346
+  },
+  "dynamic_backends": [
+    "augustus",
+    "mem0",
+    "murag",
+    "ngmemory",
+    "universalrag"
+  ],
+  "discovered_packages": [
+    "frequency_rag",
+    "frequency_rag.attack_core",
+    "frequency_rag.common",
+    "frequency_rag.evaluation",
+    "frequency_rag.experiments",
+    "frequency_rag.frequency_attack",
+    "frequency_rag.image_selection",
+    "frequency_rag.memory_agent",
+    "frequency_rag.pixel_attack",
+    "frequency_rag.memory_agent.backends"
+  ],
+  "remote_model_calls": 0,
+  "public_cli_preserved": true,
+  "internal_import_migration": "src/README.md",
+  "implementation_snapshot": {
+    "created_at": "2026-09-13T06:24:25.265771Z",
+    "project_root": "D:\\Material\\Literature Reading\\code\\frequency-rag",
+    "files": [
+      {
+        "path": "pyproject.toml",
+        "sha256": "a01ce3f65f3bbd265c208c14082c5edb1d633a36e6fc30f745e66656a3639b83",
+        "bytes": 694
+      },
+      {
+        "path": "tools/run_cli.py",
+        "sha256": "975603356ed45c954c0480062ca7dacfaf66b9a772a5270257af5df50448d377",
+        "bytes": 490
+      },
+      {
+        "path": "src/frequency_rag/__init__.py",
+        "sha256": "b29b0b93823975f3192aecba2d8b7ab5f6fa0d5f80b8b8f779c025741ea65c1d",
+        "bytes": 357
+      },
+      {
+        "path": "src/frequency_rag/__main__.py",
+        "sha256": "b2557ccf866c981fd65bc19b07e7280cc6963a4ee9558bbc1a08fa3cbe5e6158",
+        "bytes": 85
+      },
+      {
+        "path": "src/frequency_rag/attack_core/__init__.py",
+        "sha256": "862697f21d2600e9e77ffd18089f51d206803ef1cbd7a9e0554ee74845253987",
+        "bytes": 83
+      },
+      {
+        "path": "src/frequency_rag/attack_core/engine.py",
+        "sha256": "7fefa4ff2bfcdec8c7ff7839474723c0d3cea680c0dc4878c196b003c4472b57",
+        "bytes": 34258
+      },
+      {
+        "path": "src/frequency_rag/attack_core/objective.py",
+        "sha256": "5bc5ad26701e9b8ce788abf618ca4dc42aabf6e117b74825f8006bc7d6a15e44",
+        "bytes": 11962
+      },
+      {
+        "path": "src/frequency_rag/attack_core/ot.py",
+        "sha256": "fb93dc4d694f8cb4c03acc748fd93ee5d1719214bb7b25ab8ff66c4ee81e5439",
+        "bytes": 4722
+      },
+      {
+        "path": "src/frequency_rag/attack_core/surrogates.py",
+        "sha256": "c43b5c7cabc908fed32a657383b826107ce1459a8e7e30451f6c145ed4f5dbc6",
+        "bytes": 15209
+      },
+      {
+        "path": "src/frequency_rag/cli.py",
+        "sha256": "3f08ff7e9da94101eaa9b9100c96df467a0a1bd1c3e52b1ef9dc1d50822ad9f3",
+        "bytes": 19060
+      },
+      {
+        "path": "src/frequency_rag/common/__init__.py",
+        "sha256": "6a9f4b2ae7b262035a05990922c002cfb8ebe056c60f6ef6e4493630712bd91a",
+        "bytes": 86
+      },
+      {
+        "path": "src/frequency_rag/common/config.py",
+        "sha256": "cc0e63dffaca3d2449f1ef891ca37db1319fc890cfa070d53833d282fe43b68c",
+        "bytes": 28066
+      },
+      {
+        "path": "src/frequency_rag/common/io.py",
+        "sha256": "1cdc47f8ab0b37b2121ff55b5b34fec868042b6221937b5da60c2aa4802dfc97",
+        "bytes": 4130
+      },
+      {
+        "path": "src/frequency_rag/common/numerics.py",
+        "sha256": "3ccb6b59e82d5784c993db7cd8a0a93a27f3fee50b6133faae5543dfc9abf7b9",
+        "bytes": 247
+      },
+      {
+        "path": "src/frequency_rag/common/paths.py",
+        "sha256": "de9c43126f0466ee3cb1e3cf57b443cfc25c27cef00b314d79c9b312eb45c459",
+        "bytes": 176
+      },
+      {
+        "path": "src/frequency_rag/common/profiling.py",
+        "sha256": "3244f03c49bf9d1a0a06e84936a673e4991cd03a15272ad7fd787bbc15a2b36d",
+        "bytes": 5630
+      },
+      {
+        "path": "src/frequency_rag/common/provenance.py",
+        "sha256": "bacafd7d6c5040f908566e3aca6d6d85d9b43f632cdb6f46425c3e1c3a36b408",
+        "bytes": 1231
+      },
+      {
+        "path": "src/frequency_rag/evaluation/__init__.py",
+        "sha256": "39ac353a8622c6d929d9f4e5dbdf3afdc4bc0ffc98d988f2cd71eca7ce960b25",
+        "bytes": 83
+      },
+      {
+        "path": "src/frequency_rag/evaluation/judge.py",
+        "sha256": "fc842526217702bd50067374c8bf852e7ae439e2cfb114868616280ed0cdb6e0",
+        "bytes": 1178
+      },
+      {
+        "path": "src/frequency_rag/evaluation/memory_metrics.py",
+        "sha256": "cbbae62872ac698df6923352dd6253294bc183eac7184e6e684283dddfad08ef",
+        "bytes": 3703
+      },
+      {
+        "path": "src/frequency_rag/evaluation/results.py",
+        "sha256": "bb3b483289b1fc197f784dfac1b9f74690f140b0baa6c5fd2dfad48d867623d9",
+        "bytes": 43985
+      },
+      {
+        "path": "src/frequency_rag/evaluation/vectors.py",
+        "sha256": "90d6b0b3a8b9576293701d41c019a5621b5e9e4f00bbe5d4b642b8933d87238e",
+        "bytes": 11317
+      },
+      {
+        "path": "src/frequency_rag/experiments/__init__.py",
+        "sha256": "c9764ef5911c249252c169506e29b967fb213bfc1fe3d8e2827b29606a1ef786",
+        "bytes": 74
+      },
+      {
+        "path": "src/frequency_rag/experiments/attack_pipeline.py",
+        "sha256": "5d092ee1c32208663ecdc2efbfe8bdebe042f729da3487e4563a4a072ad301b8",
+        "bytes": 32996
+      },
+      {
+        "path": "src/frequency_rag/experiments/memory_cli.py",
+        "sha256": "68490c4465e89d2f3c60c3f7cfc1c652f772c833b3cf77477cba2ac213100c1b",
+        "bytes": 4058
+      },
+      {
+        "path": "src/frequency_rag/experiments/memory_runner.py",
+        "sha256": "8ba6bde4c39efa8f7a7797f55398fdcb964c3ac921df4fb6a0b466a1ca56bc23",
+        "bytes": 8331
+      },
+      {
+        "path": "src/frequency_rag/frequency_attack/__init__.py",
+        "sha256": "c588632ebdb390619e15bbe50ddcd74040beee2381e337eaaec6f34983b4b15a",
+        "bytes": 80
+      },
+      {
+        "path": "src/frequency_rag/frequency_attack/dct.py",
+        "sha256": "c52d4078d38431f0c10589051bf568cc97cb3122189b10512a8ea351b546934c",
+        "bytes": 15605
+      },
+      {
+        "path": "src/frequency_rag/image_selection/__init__.py",
+        "sha256": "5e5522f24cefbccb0552cf08d96d356d9c885a0ab5a182074d4c26574901bbb3",
+        "bytes": 83
+      },
+      {
+        "path": "src/frequency_rag/image_selection/candidates.py",
+        "sha256": "2eba7bb6757be43ab873180f10528148b612952c14d1ffa7d6a2ce830b31630e",
+        "bytes": 4682
+      },
+      {
+        "path": "src/frequency_rag/image_selection/categories.py",
+        "sha256": "103f15c6f5d766946f518873ae63b1b6ea6c13641c4e968936680726f2dfcab9",
+        "bytes": 1627
+      },
+      {
+        "path": "src/frequency_rag/image_selection/data.py",
+        "sha256": "8ece9b27a727153cac1cfa7bb87db5d872b0e233932cc56f806cb4c64b2f650f",
+        "bytes": 18302
+      },
+      {
+        "path": "src/frequency_rag/image_selection/dataset.py",
+        "sha256": "32e1d23a878d24f0f20a6ffea9a29bba7c532ba8410915436248bcada5221821",
+        "bytes": 3936
+      },
+      {
+        "path": "src/frequency_rag/image_selection/plans.py",
+        "sha256": "9096491a46cd588634294a292e60dda54f0a2efd15aaeb3fb79ad7585c2c6a53",
+        "bytes": 4970
+      },
+      {
+        "path": "src/frequency_rag/image_selection/scoring.py",
+        "sha256": "224fe45a4bc3e142476cc666899fa5b9d52fcde1961b36338c2f81371d552d27",
+        "bytes": 3773
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/__init__.py",
+        "sha256": "dcd4077cd037d74bd0c28c5c4ca1cff90ff492c867646562b53a350adb516760",
+        "bytes": 86
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/agent.py",
+        "sha256": "266408cf500abc1a7e7a34411969deb64c933cf0ef8a28bbdfa0169573e07502",
+        "bytes": 2189
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/__init__.py",
+        "sha256": "7722871e3842393952f2c5cb52d5f21c69d6652e73555c628dfb89393f6a850a",
+        "bytes": 332
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/augustus.py",
+        "sha256": "b12c4cf48913ff39d47a24baa268786e1b1b8be9bf01a3d407f8e2b937de8f94",
+        "bytes": 1110
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/base.py",
+        "sha256": "0d9dfa2a03869fc7bd1830a4c6ca4db17469a21fa2bc6c3d858155ebd926d761",
+        "bytes": 765
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/mem0.py",
+        "sha256": "902664cd4e00039fefc9e98776475e35cab68f59e40aa6cc42460e12b2704b7c",
+        "bytes": 4578
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/murag.py",
+        "sha256": "d7ae4f0b4cca5d5874033c10cc392e390a0d76a2ef881f40098d1baaf51a2229",
+        "bytes": 193
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/ngmemory.py",
+        "sha256": "2640b09c57b3c20c464591adb67cd03462e90b766f99c6f3b6f43327f608bc67",
+        "bytes": 264
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/registry.py",
+        "sha256": "54655724ce017fbdc25f3e8a443fd7930f18474a5ec0633f416bf597acf335db",
+        "bytes": 1918
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/universalrag.py",
+        "sha256": "162279830f1047bca6a2b4abde810a812f653db981e94dc18d099a4760cf1aac",
+        "bytes": 707
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/backends/vector.py",
+        "sha256": "b8d5869dfbfe6a86bce3df4291190df10962c5af40c13c0cb1f86ab7de4728eb",
+        "bytes": 4474
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/encoder.py",
+        "sha256": "60c064708036df76a42c33943c5b5899cd945974b4609803afffda9a986558fa",
+        "bytes": 1928
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/llm.py",
+        "sha256": "e096ab9c795f8c82811d41195342d782899e6f8be3a269ac5f659db2f3567577",
+        "bytes": 3933
+      },
+      {
+        "path": "src/frequency_rag/memory_agent/scenarios.py",
+        "sha256": "9c2894fbad381c18fdba6323c37b17c08cadafb91da382090eb43fc9efbdaad1",
+        "bytes": 4174
+      },
+      {
+        "path": "src/frequency_rag/pixel_attack/__init__.py",
+        "sha256": "489e00c39176c18642635446c4264af6868a7ddb5c864510aaed2976cdb633e4",
+        "bytes": 68
+      },
+      {
+        "path": "src/frequency_rag/pixel_attack/update.py",
+        "sha256": "0cff2bad54b20fb1a97873c3488e3554828376700cbeb9cd5594f15fbfd4e518",
+        "bytes": 1324
+      }
+    ],
+    "content_identity": "fec9101e9ca2e12035c4b7a606c69777e3e6214de41c1330855f1a88cc33013e"
+  }
+}

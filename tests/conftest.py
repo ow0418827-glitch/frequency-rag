@@ -7,8 +7,8 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from frequency_rag.config import ProjectConfig, load_config
-from frequency_rag.models import ImageFeatures
+from frequency_rag.common.config import ProjectConfig, load_config
+from frequency_rag.attack_core.surrogates import ImageFeatures
 
 
 class TinySurrogate:

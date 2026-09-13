@@ -8,9 +8,10 @@ import numpy as np
 from PIL import Image
 import torch
 
-from .io import load_image, save_json, save_vector, sha256_file
-from .models import resolve_device, resolve_hf_snapshot
-from .profiling import DeviceMemoryMonitor, PhaseClock
+from frequency_rag.common.numerics import normalize
+from frequency_rag.common.io import load_image, save_json, save_vector, sha256_file
+from frequency_rag.attack_core.surrogates import resolve_device, resolve_hf_snapshot
+from frequency_rag.common.profiling import DeviceMemoryMonitor, PhaseClock
 
 
 ENCODER_MODEL_IDS = {
@@ -21,12 +22,6 @@ ENCODER_MODEL_IDS = {
     "CLIP-LARGE": "openai/clip-vit-large-patch14-336",
     "SIGLIP": "google/siglip-base-patch16-224",
 }
-
-
-def normalize(vector: np.ndarray) -> np.ndarray:
-    array = np.asarray(vector)
-    norm = np.linalg.norm(array, axis=-1, keepdims=True)
-    return array / np.clip(norm, 1e-12, None)
 
 
 def cosine_similarity(left: np.ndarray, right: np.ndarray) -> float:

@@ -5,7 +5,7 @@ import math
 import pytest
 import torch
 
-from frequency_rag.frequency import (
+from frequency_rag.frequency_attack.dct import (
     DCTBasisCache,
     ProgressiveSchedule,
     analyse,

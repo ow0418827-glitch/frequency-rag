@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-12",
+  "backup_commit": "69acb860eac9f27831936329c1bb66aad0bfcd20",
+  "backup_remote_branch": "origin/dev",
+  "scope": "implementation_and_offline_validation",
+  "tests": {
+    "total_passed": 85,
+    "existing": 62,
+    "memory": 23
+  },
+  "checks": {
+    "frozen_image_pairs": 5,
+    "cli": true,
+    "compileall": true,
+    "git_diff_check": true
+  },
+  "real_data": {
+    "datasets": 5,
+    "sessions": 68,
+    "turns": 1071,
+    "image_references": 217,
+    "questions": 346,
+    "planned_injection_pairs": 80
+  },
+  "real_model_experiment": "not_run",
+  "paid_model_calls": 0,
+  "external_mem0_integration": "adapter_tested_with_fake_client_not_live_database",
+  "candidate_pool": "ShareGPT4V-100K_not_available_locally",
+  "limitations": [
+    "independent_backend_implementations_not_author_code",
+    "semantic_target_claim_metric_not_original_visual_similarity_ASR",
+    "MiniMax_replaces_original_generation_stack",
+    "four_category_real_probes_require_pool_and_model_configuration"
+  ],
+  "code_sha256": {
+    "memory_backends.py": "c504c7e46d91d627d9d9f55ff3310c0f4c8678090bf8c38d975a54d2bf794ee3",
+    "memory_cli.py": "56d80b8b9e9928eba28ef5fa624f86707fa5812105b30f6a8bd6c900f641c311",
+    "memory_dataset.py": "ba1b994d9ad59c902d588339be51162750a3155ebf629ea818bfe598ff764d59",
+    "memory_experiment.py": "b0dc4fe7a7cca557879eb7b1fcc3835b931cad77da695e79b03594f569ddb5b5",
+    "memory_models.py": "943191d71ff8a3a42ccdd6f5e5dc0aa6628c4f06f0c13e5f87014346f29a888a",
+    "memory_preparation.py": "358e6d41d42666fa2e0372742f134da95a9d741fcdb9703ebff406bc4901919d"
+  }
+}

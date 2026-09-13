@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from frequency_rag.common.paths import PROJECT_ROOT
 from pathlib import Path
 from typing import Any, Iterable
 
-from .io import load_json, sha256_file
+from frequency_rag.common.io import load_json, sha256_file
 
 
 MEMGALLERY_DATASETS = (
@@ -48,7 +49,7 @@ def _resolve_image_candidate(
     if p.is_absolute() and p.is_file():
         return p.resolve()
 
-    project_root = Path(__file__).resolve().parents[2]
+    project_root = PROJECT_ROOT
     candidates: list[Path] = []
 
     if not p.is_absolute():

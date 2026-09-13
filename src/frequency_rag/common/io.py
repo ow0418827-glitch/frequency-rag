@@ -116,4 +116,3 @@ def decoded_image_audit(
         "budget_levels": int(maximum_levels),
         "within_budget": maximum <= int(maximum_levels),
     }
-

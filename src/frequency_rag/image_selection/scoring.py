@@ -5,8 +5,8 @@ import re
 
 import numpy as np
 
-from .config import SelectionConfig
-from .data import MemGalleryCandidate, MemGalleryQuery
+from frequency_rag.common.config import SelectionConfig
+from frequency_rag.image_selection.data import MemGalleryCandidate, MemGalleryQuery
 
 
 WORD_RE = re.compile(r"[\w]+", re.UNICODE)

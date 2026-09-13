@@ -20,6 +20,7 @@ models = [
   "transformers>=4.45",
 ]
 test = ["pytest>=8"]
+memory = ["mem0ai>=0.1.0"]
 
 [project.scripts]
 frequency-rag = "frequency_rag.cli:main"

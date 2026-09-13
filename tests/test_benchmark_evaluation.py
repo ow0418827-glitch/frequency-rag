@@ -6,10 +6,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from frequency_rag.benchmark import write_summary
+from frequency_rag.evaluation.results import write_summary
 from frequency_rag.cli import _time_budgets_from_runs
-from frequency_rag.evaluation import compute_vector_metrics
-from frequency_rag.io import load_json, save_json, sha256_file
+from frequency_rag.evaluation.vectors import compute_vector_metrics
+from frequency_rag.common.io import load_json, save_json, sha256_file
 
 
 def test_vector_metrics_preserve_original_fields_and_unit_vector_identity() -> None:
