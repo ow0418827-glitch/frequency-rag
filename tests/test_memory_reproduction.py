@@ -258,14 +258,22 @@ def test_mem0_current_api_uses_filter_and_top_k():
     assert memory.recall("fruit").entries == []
 
 
-def test_local_secret_rejected_before_any_model_request(benchmark, tmp_path):
+def test_local_secrets_are_redacted_from_run_artifacts(benchmark, tmp_path):
     _, bp, _ = benchmark
     cp = tmp_path / "config.json"
-    save_json(cp, {"backend": "murag", "model": {"api_key": "test-secret"}})
-    output = tmp_path / "not-created"
-    with pytest.raises(ValueError, match="环境变量"):
-        run_memory_experiment(bp, None, cp, output, conditions=["clean"])
-    assert not output.exists()
+    config = {"backend": "murag", "model": {"model": "test_double", "api_key": "test-secret"},
+              "judge": {"api_key": "judge-secret"},
+              "mem0": {"nested": [{"api_key": "mem0-secret", "password": "db-secret"}]}}
+    save_json(cp, config)
+    output = tmp_path / "run"
+    result = run_memory_experiment(bp, None, cp, output, conditions=["clean"],
+                                  model=Model(), judge=Model(), encoder=Encoder())
+    assert result["status"] == "complete"
+    for path in output.rglob("*.json"):
+        text = path.read_text(encoding="utf-8")
+        assert all(secret not in text for secret in ("test-secret", "judge-secret", "mem0-secret", "db-secret"))
+    assert json.loads(cp.read_text(encoding="utf-8")) == config
+    assert json.loads((output / "config.json").read_text(encoding="utf-8"))["model"]["api_key"] == "[REDACTED]"
 
 
 def test_poison_plan_matches_evidence_round(benchmark, tmp_path):

@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from frequency_rag.common.io import load_json, save_json, sha256_file
+from frequency_rag.common.credentials import redact_config
 from frequency_rag.image_selection.categories import CATEGORIES
 
 
@@ -73,6 +74,6 @@ def select_injection_pairs(pool_path, output, encoder, model, *, per_category=4,
     result = {"provenance": pool.get("provenance", "unspecified"),
               "pool_sha256": sha256_file(pool_path), "pairs": pairs, "validation_audit": audit,
               "selector_encoder": encoder.snapshot() if hasattr(encoder, "snapshot") else "test_double",
-              "validator_model": getattr(model, "config", {"kind": "test_double"})}
+              "validator_model": redact_config(getattr(model, "config", {"kind": "test_double"}))}
     save_json(output, result)
     return result

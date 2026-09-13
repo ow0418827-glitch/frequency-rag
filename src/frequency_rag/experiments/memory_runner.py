@@ -7,6 +7,7 @@ from pathlib import Path
 
 
 from frequency_rag.common.io import load_json, save_json, sha256_file
+from frequency_rag.common.credentials import redact_config
 from frequency_rag.memory_agent.backends import make_memory, available_backends
 from frequency_rag.memory_agent.scenarios import adversarial_images, condition_dialog
 from frequency_rag.memory_agent.agent import MemoryAgent
@@ -35,16 +36,6 @@ def run_memory_experiment(bundle_path, plan_path, config_path, output, *, run_di
                           conditions=("clean", "oracle", "adversarial"), model=None, judge=None,
                           encoder=None, memory_factory=None):
     bundle, config = load_json(bundle_path), load_json(config_path)
-    def reject_secrets(value):
-        if isinstance(value, dict):
-            for key, child in value.items():
-                if key.lower() in {"api_key", "authorization", "password", "token"} and child:
-                    raise ValueError("记忆配置禁止直接嵌入密钥，请使用环境变量。")
-                reject_secrets(child)
-        elif isinstance(value, list):
-            for child in value:
-                reject_secrets(child)
-    reject_secrets(config)
     plan = load_json(plan_path) if plan_path else {"samples": [], "family": "none"}
     if len(set(conditions)) != len(conditions) or not conditions:
         raise ValueError("实验条件不能重复或为空。")
@@ -73,7 +64,7 @@ def run_memory_experiment(bundle_path, plan_path, config_path, output, *, run_di
     encoder = encoder or (MemoryEncoder(config["encoder"]) if config["backend"] != "mem0" else None)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
-    save_json(output / "config.json", config)
+    save_json(output / "config.json", redact_config(config))
     rows = []
     provenance = {"bundle_sha256": sha256_file(bundle_path),
                   "plan_sha256": sha256_file(plan_path) if plan_path else None,
@@ -90,7 +81,7 @@ def run_memory_experiment(bundle_path, plan_path, config_path, output, *, run_di
                                     "method": attack_manifest.get("method"),
                                     "adversarial_images": {s["sample_id"]: sha256_file(images[s["sample_id"]])
                                                            for s in plan["samples"]} if images else {}}
-    save_json(output / "manifest.json", provenance)
+    save_json(output / "manifest.json", redact_config(provenance))
     for condition in conditions:
         directory = output / condition
         directory.mkdir()

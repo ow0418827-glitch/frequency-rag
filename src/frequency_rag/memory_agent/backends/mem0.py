@@ -2,9 +2,9 @@
 from __future__ import annotations
 from dataclasses import asdict
 import inspect
-import os
 import uuid
 from frequency_rag.common.io import load_json, save_json
+from frequency_rag.common.credentials import read_api_key
 from .base import MemoryEntry, Retrieval
 
 class Mem0Memory:
@@ -19,13 +19,15 @@ class Mem0Memory:
             except ImportError as exc:
                 raise RuntimeError("事实记忆后端需要安装可选依赖 mem0ai。") from exc
             def resolve_env(value):
+                if isinstance(value, list):
+                    return [resolve_env(child) for child in value]
                 if not isinstance(value, dict):
                     return value
                 resolved = {k: resolve_env(v) for k, v in value.items() if k != "api_key_env"}
-                if "api_key_env" in value:
-                    key = os.environ.get(value["api_key_env"])
+                if "api_key_env" in value or value.get("api_key"):
+                    key = read_api_key(value)
                     if not key:
-                        raise ValueError("事实记忆配置的密钥环境变量未设置。")
+                        raise ValueError("事实记忆配置的密钥未设置，请填写 api_key 或对应环境变量。")
                     resolved["api_key"] = key
                 return resolved
             client = Memory.from_config(resolve_env(config))

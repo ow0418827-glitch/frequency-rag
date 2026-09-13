@@ -4,25 +4,25 @@ from __future__ import annotations
 import base64
 import json
 import mimetypes
-import os
 import re
 from pathlib import Path
 import urllib.error
 import urllib.request
+from frequency_rag.common.credentials import read_api_key, redact_config
 
 
 class ChatModel:
-    """兼容聊天补全协议，密钥只从环境变量读取，不写入运行记录。"""
+    """兼容聊天补全协议，支持本地配置密钥，公开配置保持脱敏。"""
 
     def __init__(self, config: dict):
-        self.config = dict(config)
+        self.config = redact_config(config)
         self.model = config["model"]
         if not self.model:
             raise ValueError("模型名称不能为空。")
         self.base_url = config["base_url"].rstrip("/")
-        self.key = os.environ.get(config.get("api_key_env", "OPENAI_API_KEY"), "")
+        self.key = read_api_key(config, default_env="OPENAI_API_KEY")
         if config.get("require_api_key", True) and not self.key:
-            raise ValueError("模型服务密钥环境变量未设置。")
+            raise ValueError("模型服务密钥未设置，请填写 api_key 或配置 api_key_env 对应的环境变量。")
         if not self.base_url.startswith(("http://", "https://")):
             raise ValueError("模型服务地址必须使用 HTTP 或 HTTPS。")
 
